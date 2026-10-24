@@ -169,7 +169,7 @@ Licensed under MIT: free to use, modify, and redistribute (including commercial 
 
 ## MIT License
 
-Copyright (c) 2026 Jerry Hsiao
+Copyright (c) 2026 Jerry Hsiao (蕭永滐)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
