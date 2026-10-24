@@ -638,7 +638,7 @@ body::after{
   var BUDGET = 500000;
 
   /* ================= 状态 ================= */
-  var lang = localStorage.getItem('xray.lang') || 'cn';
+  var lang = localStorage.getItem('holdingslens.lang') || 'cn';
   var holdings = [];          /* [{id, amount}] */
   var lastReport = null;
 
@@ -1169,7 +1169,7 @@ body::after{
   function bind() {
     $('#langBtn').onclick = function () {
       lang = lang === 'cn' ? 'tw' : 'cn';
-      localStorage.setItem('xray.lang', lang);
+      localStorage.setItem('holdingslens.lang', lang);
       applyLang();
       renderPresets();
       renderAssets();

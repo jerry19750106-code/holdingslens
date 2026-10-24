@@ -3,8 +3,8 @@
  * 只用同步 storage（数据量极小），避免异步竞态
  * ========================================================== */
 
-const HOLD_KEY = 'xray.holdings';
-const LANG_KEY = 'xray.lang';
+const HOLD_KEY = 'holdingslens.holdings';
+const LANG_KEY = 'holdingslens.lang';
 
 function getHoldings() {
   try {
