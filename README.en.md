@@ -160,7 +160,7 @@ Tests are not decoration. Issues found and fixed during development include: cri
 
 Licensed under MIT: free to use, modify, and redistribute (including commercial use), provided the copyright and license notice are preserved; the author provides no warranty and assumes no liability for any loss arising from use of this project.
 
-- Author: Jerry Hsiao (蕭永瑞)
+- Author: Jerry Hsiao (蕭永滐)
 - Email: jerry19750106@gmail.com
 - GitHub: [@jerry19750106-code](https://github.com/jerry19750106-code)
 - Live demo: https://jerry19750106-code.github.io/holdingslens/
