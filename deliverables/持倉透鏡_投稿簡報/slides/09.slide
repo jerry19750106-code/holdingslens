@@ -15,7 +15,7 @@
     <Text style={{ fontSize: 20, color: '#00E2C6', letterSpacing: 3 }}>持倉透鏡 HoldingsLens · 1024 造物挑戰</Text>
     <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#E6F0FA', marginTop: 22, lineHeight: 1.25, textAlign: 'center' }}>把「風險從哪來」<br />講清楚，比算準漲跌更有用</Text>
     <Box style={{ width: 60, height: 2, background: '#0099FF', marginTop: 30 }} />
-    <Text style={{ fontSize: 21, color: '#E6F0FA', opacity: 0.78, marginTop: 26, lineHeight: 1.7, textAlign: 'center' }}>體驗方式：H5 網頁隨手查 · 微信小程序隨身帶 · 本地腳本批量回測</Text>
+    <Text style={{ fontSize: 21, color: '#E6F0FA', opacity: 0.78, marginTop: 26, lineHeight: 1.7, textAlign: 'center' }}>體驗方式：H5 連結即開即用 · 小程序原始碼見 GitHub · 本地腳本批量分析</Text>
     <Text style={{ fontSize: 18, color: '#E6F0FA', opacity: 0.55, marginTop: 14, textAlign: 'center' }}>全本地計算 · 持倉不上傳 · 簡繁雙語</Text>
   </Box>
   <Box style={{ position: 'absolute', bottom: 80, left: 0, right: 0, flexDirection: 'row', justifyContent: 'center', gap: 40 }}>

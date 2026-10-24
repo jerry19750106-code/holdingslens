@@ -20,7 +20,7 @@
   var ASSETS = [
     { id: 'cn_broad',  name: '中国A股·宽基',   nameTw: '中國A股·寬基',   vol: 20,  mdd: -46,  kind: 'equity',  region: 'CN',    hint: '沪深300 / 中证A500' },
     { id: 'cn_growth', name: '中国A股·成长',   nameTw: '中國A股·成長',   vol: 28,  mdd: -70,  kind: 'equity',  region: 'CN',    hint: '创业板 / 科创50 / 半导体 / 新能源' },
-    { id: 'cn_small',  name: '中国A股·中小盘', nameTw: '中國A股·中小盤', vol: 25,  mdd: -62,  kind: 'equity',  region: 'CN',    hint: '中证500 / 中证1000 / 北证' },
+    { id: 'cn_small',  name: '中国A股·中小盘', nameTw: '中國A股·中小盤', vol: 25,  mdd: -62,  kind: 'equity',  region: 'CN',    hint: '中证500 / 中证1000 / 中证2000 / 北证' },
     { id: 'cn_div',    name: '中国A股·红利',   nameTw: '中國A股·紅利',   vol: 16,  mdd: -42,  kind: 'equity',  region: 'CN',    hint: '红利低波 / 银行 / 消费 / 公用事业' },
     { id: 'hk',        name: '港股',           nameTw: '港股',           vol: 24,  mdd: -66,  kind: 'equity',  region: 'HK',    hint: '恒生 / 恒生科技 / 中概互联' },
     { id: 'tw',        name: '台股',           nameTw: '台股',           vol: 22,  mdd: -56,  kind: 'equity',  region: 'TW',    hint: '台湾50 / 高股息 / 半导体相关' },
@@ -83,14 +83,14 @@
   /* ---- 常用代码 / 名称别名 → 资产类别 ---- */
   var ALIASES = {
     /* A股宽基 */
-    '510300': 'cn_broad', '159919': 'cn_broad', '510310': 'cn_broad', '563300': 'cn_broad', '159352': 'cn_broad',
+    '510300': 'cn_broad', '159919': 'cn_broad', '510310': 'cn_broad', '159352': 'cn_broad',
     '沪深300': 'cn_broad', '中证A500': 'cn_broad', '上证50': 'cn_broad', '510050': 'cn_broad', '宽基': 'cn_broad',
     /* A股成长 */
     '159915': 'cn_growth', '588000': 'cn_growth', '588080': 'cn_growth', '512480': 'cn_growth', '515790': 'cn_growth',
     '512660': 'cn_growth', '516160': 'cn_growth', '512000': 'cn_growth', '159995': 'cn_growth', '159819': 'cn_growth',
     '创业板': 'cn_growth', '科创': 'cn_growth', '半导体': 'cn_growth', '新能源': 'cn_growth', '军工': 'cn_growth',
     /* A股中小盘 */
-    '510500': 'cn_small', '512100': 'cn_small', '159922': 'cn_small', '5633001000': 'cn_small',
+    '510500': 'cn_small', '512100': 'cn_small', '159922': 'cn_small', '563300': 'cn_small',
     '中证500': 'cn_small', '中证1000': 'cn_small', '中小盘': 'cn_small', '北证': 'cn_small',
     /* A股红利 */
     '510880': 'cn_div', '515180': 'cn_div', '512890': 'cn_div', '159928': 'cn_div', '512690': 'cn_div',
@@ -609,7 +609,7 @@
       pseudoHigh: function (d) {
         return { level: 'high', tag: '偽分散',
           title: d.m + ' 筆持倉，風險意義上只有 ' + d.enb.toFixed(1) + ' 筆押注',
-          detail: '有效押注數 ENB = min(N_eff, 1/(wᵀCw))，C 為持倉資產相關係數矩陣，w 為資金權重。持倉高度相關或權重极度傾斜時，筆數再多也只是同一筆交易的不同包裝。' };
+          detail: '有效押注數 ENB = min(N_eff, 1/(wᵀCw))，C 為持倉資產相關係數矩陣，w 為資金權重。持倉高度相關或權重極度傾斜時，筆數再多也只是同一筆交易的不同包裝。' };
       },
       pseudoMid: function (d) {
         return { level: 'mid', tag: '偏集中',

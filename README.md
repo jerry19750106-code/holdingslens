@@ -113,7 +113,7 @@ node build-standalone.js     # 重新生成 H5 單檔案版
 
 ## 決策記錄
 
-本專案經過四輪外部評審（Claude ×2、Gemini ×2，含 Python 獨立交叉驗算）與一輪使用者親驗，以下是影響成品形態的最終決定——全部記錄在此，供評審與貢獻者檢視：
+本專案經過四輪外部獨立評審（含 Python 獨立交叉驗算）與一輪使用者親驗，以下是影響成品形態的最終決定——全部記錄在此，供評審與貢獻者檢視：
 
 | # | 議題 | 最終決定 | 理由與證據 |
 |---|---|---|---|
@@ -144,8 +144,8 @@ node verify-mp.js           # 小程式靜態自檢         → 17/17 通過
 | `deliverables/作品說明.md` | 投稿作品完整說明（定位／功能／數學／驗證／限制） |
 | `deliverables/資產風險參數表.xlsx` | 17 類資產參數＋136 組相關係數矩陣＋場外代碼映射（數據由引擎程式 dump，非手抄） |
 | `deliverables/持倉透鏡_投稿簡報.pptx` | 9 頁投稿簡報（案例數據由引擎實跑產出） |
-| `deliverables/XRay_投稿簡報/STORY.md` | 簡報敘事結構與分頁大綱 |
-| `deliverables/XRay_投稿簡報/inspect.md` | 9 頁逐頁視覺 lint 報告 |
+| `deliverables/持倉透鏡_投稿簡報/STORY.md` | 簡報敘事結構與分頁大綱 |
+| `deliverables/持倉透鏡_投稿簡報/inspect.md` | 9 頁逐頁視覺 lint 報告 |
 | `deliverables/shots/` | 兩端驗證截圖 |
 | `LICENSE` | MIT 授權條款全文 |
 

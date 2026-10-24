@@ -113,7 +113,7 @@ Compare columns 3 and 4: 5 nominal positions with nEff 5.0 "look diversified", y
 
 ## Decision Log
 
-This project went through four rounds of external review (Claude ×2, Gemini ×2, including independent Python cross-validation) and one round of hands-on user verification. Below are the final decisions that shaped the deliverable — recorded here for reviewers and contributors:
+This project went through four rounds of independent external review (including independent Python cross-validation) and one round of hands-on user verification. Below are the final decisions that shaped the deliverable — recorded here for reviewers and contributors:
 
 | # | Topic | Final decision | Rationale & evidence |
 |---|---|---|---|
@@ -144,8 +144,8 @@ Tests are not decoration. Issues found and fixed during development include: cri
 | `deliverables/作品說明.md` | Full submission write-up (positioning / features / math / verification / limits) |
 | `deliverables/資產風險參數表.xlsx` | 17 asset-class parameters + 136-cell correlation matrix + OTC code mapping (dumped from engine code, not hand-copied) |
 | `deliverables/持倉透鏡_投稿簡報.pptx` | 9-page pitch deck (case numbers produced by real engine runs) |
-| `deliverables/XRay_投稿簡報/STORY.md` | Deck narrative structure and page outline |
-| `deliverables/XRay_投稿簡報/inspect.md` | Page-by-page visual lint report (9 pages) |
+| `deliverables/持倉透鏡_投稿簡報/STORY.md` | Deck narrative structure and page outline |
+| `deliverables/持倉透鏡_投稿簡報/inspect.md` | Page-by-page visual lint report (9 pages) |
 | `deliverables/shots/` | Verification screenshots of both front ends |
 | `LICENSE` | Full MIT license text |
 

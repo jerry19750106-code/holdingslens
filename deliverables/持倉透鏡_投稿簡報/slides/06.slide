@@ -46,7 +46,7 @@
       </Box>
       <Box style={{ flex: 1, background: 'rgba(255,214,102,0.07)', border: '1px solid rgba(255,214,102,0.26)', borderRadius: 12, paddingTop: 14, paddingBottom: 14, paddingLeft: 18, paddingRight: 18, justifyContent: 'center' }}>
         <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#E6F0FA' }}>按場景選端，不用裝軟體</Text>
-        <Text style={{ fontSize: 16, color: '#E6F0FA', opacity: 0.72, marginTop: 5, lineHeight: 1.55 }}>隨手查用小程序，分享用 H5，批量回測用腳本。</Text>
+        <Text style={{ fontSize: 16, color: '#E6F0FA', opacity: 0.72, marginTop: 5, lineHeight: 1.55 }}>即開即用看 H5，批量回測用腳本，小程序原始碼見 GitHub。</Text>
       </Box>
       <Box style={{ flex: 1, background: 'rgba(0,153,255,0.05)', border: '1px solid rgba(0,153,255,0.2)', borderRadius: 12, paddingTop: 12, paddingBottom: 12, paddingLeft: 18, paddingRight: 18, flexDirection: 'row', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
         <Box style={{ background: 'rgba(0,153,255,0.16)', borderRadius: 999, paddingTop: 5, paddingBottom: 5, paddingLeft: 13, paddingRight: 13 }}>

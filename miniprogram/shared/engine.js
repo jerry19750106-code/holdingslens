@@ -396,7 +396,7 @@
       pseudoHigh: function (d) {
         return { level: 'high', tag: '偽分散',
           title: d.m + ' 筆持倉，風險意義上只有 ' + d.enb.toFixed(1) + ' 筆押注',
-          detail: '有效押注數 ENB = min(N_eff, 1/(wᵀCw))，C 為持倉資產相關係數矩陣，w 為資金權重。持倉高度相關或權重极度傾斜時，筆數再多也只是同一筆交易的不同包裝。' };
+          detail: '有效押注數 ENB = min(N_eff, 1/(wᵀCw))，C 為持倉資產相關係數矩陣，w 為資金權重。持倉高度相關或權重極度傾斜時，筆數再多也只是同一筆交易的不同包裝。' };
       },
       pseudoMid: function (d) {
         return { level: 'mid', tag: '偏集中',
