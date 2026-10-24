@@ -1,0 +1,43 @@
+<Slide style={{ width: '1280px', height: '720px', background: '#0A1628', padding: '20px 64px', position: 'relative', display: 'flex', flexDirection: 'column' }}>
+  <Box style={{ height: 76, justifyContent: 'center' }}>
+    <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#E6F0FA' }}>大家都在算收益，沒人算「風險從哪來」</Text>
+  </Box>
+  <Box style={{ flexDirection: 'row', gap: 40, flex: 1, alignItems: 'stretch' }}>
+    <Box style={{ flex: 6, flexDirection: 'column' }}>
+      <Text style={{ fontSize: 21, color: '#E6F0FA', lineHeight: 1.7, opacity: 0.92 }}>打開任何一個投資 App，首屏永遠是淨值、漲跌幅、收益曲線。</Text>
+      <Text style={{ fontSize: 21, color: '#E6F0FA', lineHeight: 1.7, opacity: 0.92, marginTop: 20 }}>但你手上的基金、ETF、黃金、債券<span style={{ color: '#0099FF', fontWeight: 'bold' }}>合在一起</span>，風險到底由誰主導？幾乎沒有工具回答。</Text>
+      <Text style={{ fontSize: 21, color: '#E6F0FA', lineHeight: 1.7, opacity: 0.92, marginTop: 20 }}>結果是：名義買了 10 檔，實際把風險全押在同一類資產上，自己還不知道。</Text>
+      <Box style={{ marginTop: 'auto', background: 'rgba(0,153,255,0.08)', border: '1px solid rgba(0,153,255,0.3)', borderRadius: 14, paddingTop: 20, paddingBottom: 20, paddingLeft: 22, paddingRight: 22, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 56, height: 56, borderRadius: 28, background: 'linear-gradient(135deg,#0099FF,#00E2C6)', alignItems: 'center', justifyContent: 'center' }}>
+          <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#0A1628' }}>!</Text>
+        </Box>
+        <Box style={{ flex: 1 }}>
+          <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#E6F0FA' }}>持倉檔數 ≠ 分散程度</Text>
+          <Text style={{ fontSize: 16, color: '#E6F0FA', opacity: 0.72, marginTop: 5, lineHeight: 1.5 }}>10 檔全押科技，等同 1 檔科技——檔數會騙人，風險貢獻不會。</Text>
+        </Box>
+      </Box>
+    </Box>
+    <Box style={{ flex: 4, background: 'linear-gradient(135deg,#0099FF 0%,#00E2C6 100%)', borderRadius: 16, padding: 32, justifyContent: 'space-between' }}>
+      <Box>
+        <Text style={{ fontSize: 22, color: '#0A1628', fontWeight: 'bold' }}>你天天看的是</Text>
+        <Text style={{ fontSize: 42, fontWeight: 'bold', color: '#0A1628', marginTop: 8 }}>漲跌 · 淨值</Text>
+      </Box>
+      <Box style={{ borderTop: '1px solid rgba(10,22,40,0.35)', borderBottom: '1px solid rgba(10,22,40,0.35)', paddingTop: 18, paddingBottom: 18, alignItems: 'center' }}>
+        <Box style={{ width: 46, height: 46, borderRadius: 23, background: 'rgba(10,22,40,0.88)', alignItems: 'center', justifyContent: 'center' }}>
+          <svg width={24} height={24} viewBox='0 0 28 28'>
+            <path d='M14 3 L14 19 M7 13 L14 21 L21 13' stroke='#00E2C6' strokeWidth='2.5' fill='none' strokeLinecap='round' strokeLinejoin='round' />
+          </svg>
+        </Box>
+        <Text style={{ fontSize: 17, color: '#0A1628', opacity: 0.8, marginTop: 10, fontWeight: 'bold' }}>持倉透鏡 補上這一塊</Text>
+      </Box>
+      <Box>
+        <Text style={{ fontSize: 22, color: '#0A1628', fontWeight: 'bold' }}>你很少看到的是</Text>
+        <Text style={{ fontSize: 42, fontWeight: 'bold', color: '#0A1628', marginTop: 8 }}>風險從哪來</Text>
+      </Box>
+    </Box>
+  </Box>
+  <Box style={{ position: 'absolute', bottom: 18, left: 64, right: 64, flexDirection: 'row', justifyContent: 'space-between' }}>
+    <Text style={{ fontSize: 14, color: '#E6F0FA', opacity: 0.45 }}>持倉透鏡 HoldingsLens · 1024 投稿</Text>
+    <Text style={{ fontSize: 14, color: '#E6F0FA', opacity: 0.45 }}>02 / 09</Text>
+  </Box>
+</Slide>

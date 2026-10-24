@@ -1,0 +1,54 @@
+<Slide style={{ width: '1280px', height: '720px', background: '#0A1628', padding: '20px 64px', position: 'relative', display: 'flex', flexDirection: 'column' }}>
+  <Box style={{ flexDirection: 'row', gap: 36, flex: 1, alignItems: 'stretch' }}>
+    <Box style={{ flex: 40, background: 'linear-gradient(135deg,#0099FF 0%,#00E2C6 100%)', borderRadius: 16, padding: 36, flexDirection: 'column', justifyContent: 'space-between' }}>
+      <Box>
+        <Text style={{ fontSize: 42, fontWeight: 'bold', color: '#0A1628', lineHeight: 1.25 }}>為什麼<br />不爛大街</Text>
+        <Text style={{ fontSize: 18, color: '#0A1628', opacity: 0.82, marginTop: 20, lineHeight: 1.6 }}>投資工具都在比誰會「算漲跌」，<br />沒人在算「風險從哪來」。</Text>
+      </Box>
+      <Box style={{ background: 'rgba(10,22,40,0.16)', borderRadius: 12, paddingTop: 14, paddingBottom: 14, paddingLeft: 16, paddingRight: 16 }}>
+        <Text style={{ fontSize: 16, color: '#0A1628', fontWeight: 'bold', lineHeight: 1.5 }}>一句話：把「你以為分散了」<br />變成「你看得懂的風險帳單」。</Text>
+      </Box>
+    </Box>
+    <Box style={{ flex: 60, flexDirection: 'column', justifyContent: 'space-between', borderRight: '1px solid rgba(0,226,198,0.18)', paddingRight: 20 }}>
+      <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'flex-start', background: 'rgba(0,153,255,0.05)', borderRadius: 12, paddingTop: 13, paddingBottom: 13, paddingLeft: 14, paddingRight: 14 }}>
+        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#0099FF', width: 28 }}>①</Text>
+        <Box style={{ flex: 1 }}>
+          <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#E6F0FA', lineHeight: 1.45 }}>風險歸因，不預測</Text>
+          <Text style={{ fontSize: 16, color: '#E6F0FA', opacity: 0.7, marginTop: 4, lineHeight: 1.45 }}>回答「風險押在哪」，而非「明天漲跌」——不跟風做預言家。</Text>
+        </Box>
+      </Box>
+      <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'flex-start', background: 'rgba(0,153,255,0.05)', borderRadius: 12, paddingTop: 13, paddingBottom: 13, paddingLeft: 14, paddingRight: 14 }}>
+        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#0099FF', width: 28 }}>②</Text>
+        <Box style={{ flex: 1 }}>
+          <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#E6F0FA', lineHeight: 1.45 }}>每個數字可解釋</Text>
+          <Text style={{ fontSize: 16, color: '#E6F0FA', opacity: 0.7, marginTop: 4, lineHeight: 1.45 }}>協方差矩陣、邊際風險貢獻一條條列出來，不開黑箱。</Text>
+        </Box>
+      </Box>
+      <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'flex-start', background: 'rgba(0,153,255,0.05)', borderRadius: 12, paddingTop: 13, paddingBottom: 13, paddingLeft: 14, paddingRight: 14 }}>
+        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#0099FF', width: 28 }}>③</Text>
+        <Box style={{ flex: 1 }}>
+          <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#E6F0FA', lineHeight: 1.45 }}>內建危機壓力測試</Text>
+          <Text style={{ fontSize: 16, color: '#E6F0FA', opacity: 0.7, marginTop: 4, lineHeight: 1.45 }}>相關性只升不降，直接揭穿「假分散」的真面目。</Text>
+        </Box>
+      </Box>
+      <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'flex-start', background: 'rgba(0,153,255,0.05)', borderRadius: 12, paddingTop: 13, paddingBottom: 13, paddingLeft: 14, paddingRight: 14 }}>
+        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#0099FF', width: 28 }}>④</Text>
+        <Box style={{ flex: 1 }}>
+          <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#E6F0FA', lineHeight: 1.45 }}>簡 / 繁雙語輸出</Text>
+          <Text style={{ fontSize: 16, color: '#E6F0FA', opacity: 0.7, marginTop: 4, lineHeight: 1.45 }}>兩岸與海外用戶都看得懂，術語在地化而非機器翻譯。</Text>
+        </Box>
+      </Box>
+      <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'flex-start', background: 'rgba(0,153,255,0.05)', borderRadius: 12, paddingTop: 13, paddingBottom: 13, paddingLeft: 14, paddingRight: 14 }}>
+        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#0099FF', width: 28 }}>⑤</Text>
+        <Box style={{ flex: 1 }}>
+          <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#E6F0FA', lineHeight: 1.45 }}>全本地計算</Text>
+          <Text style={{ fontSize: 16, color: '#E6F0FA', opacity: 0.7, marginTop: 4, lineHeight: 1.45 }}>持倉不上傳任何伺服器，隱私自己掌控。</Text>
+        </Box>
+      </Box>
+    </Box>
+  </Box>
+  <Box style={{ position: 'absolute', bottom: 18, left: 64, right: 64, flexDirection: 'row', justifyContent: 'space-between' }}>
+    <Text style={{ fontSize: 14, color: '#E6F0FA', opacity: 0.45 }}>持倉透鏡 HoldingsLens · 1024 投稿</Text>
+    <Text style={{ fontSize: 14, color: '#E6F0FA', opacity: 0.45 }}>08 / 09</Text>
+  </Box>
+</Slide>

@@ -1,0 +1,33 @@
+<Slide style={{ width: '1280px', height: '720px', background: '#0A1628', padding: '20px 64px', position: 'relative', display: 'flex', flexDirection: 'column' }}>
+  <Box style={{ height: 76, justifyContent: 'center' }}>
+    <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#E6F0FA' }}>三個公式，把風險拆開</Text>
+  </Box>
+  <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 22, marginBottom: 14 }}>
+    <Text style={{ fontSize: 100, fontWeight: 'bold', color: '#0099FF' }}>3</Text>
+    <Text style={{ fontSize: 25, color: '#E6F0FA', opacity: 0.8, lineHeight: 1.4 }}>個核心公式<br />構成整套歸因引擎</Text>
+  </Box>
+  <Box style={{ flexDirection: 'row', flex: 1, alignItems: 'stretch' }}>
+    <Box style={{ flex: 1, paddingHorizontal: 26, borderRight: '1px solid rgba(230,240,250,0.12)', justifyContent: 'space-between' }}>
+      <Text style={{ fontSize: 20, color: '#00E2C6', fontWeight: 'bold' }}>① 協方差矩陣</Text>
+      <Text style={{ fontSize: 26, color: '#E6F0FA', fontWeight: 'bold' }}>Σij = ρij × σi × σj</Text>
+      <Text style={{ fontSize: 18, color: '#E6F0FA', opacity: 0.8, lineHeight: 1.6 }}>把所有資產兩兩的相關性與波動，壓成一張風險地圖。</Text>
+    </Box>
+    <Box style={{ flex: 1, paddingHorizontal: 26, borderRight: '1px solid rgba(230,240,250,0.12)', justifyContent: 'space-between' }}>
+      <Text style={{ fontSize: 20, color: '#00E2C6', fontWeight: 'bold' }}>② 風險貢獻</Text>
+      <Text style={{ fontSize: 26, color: '#E6F0FA', fontWeight: 'bold' }}>RCi = wi × (Σw)i / σp</Text>
+      <Text style={{ fontSize: 18, color: '#E6F0FA', opacity: 0.8, lineHeight: 1.6 }}>每類資產吃掉多少波動，一目了然；且 ΣRCi = σp。</Text>
+    </Box>
+    <Box style={{ flex: 1, paddingHorizontal: 26, justifyContent: 'space-between' }}>
+      <Text style={{ fontSize: 20, color: '#00E2C6', fontWeight: 'bold' }}>③ 危機壓力測試</Text>
+      <Text style={{ fontSize: 26, color: '#E6F0FA', fontWeight: 'bold' }}>ρ 只升不降</Text>
+      <Text style={{ fontSize: 18, color: '#E6F0FA', opacity: 0.8, lineHeight: 1.6 }}>危機下相關性只允許上升，保證 σ_crisis ≥ σ_normal。</Text>
+    </Box>
+  </Box>
+  <Box style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid rgba(230,240,250,0.12)' }}>
+    <Text style={{ fontSize: 19, color: '#E6F0FA', opacity: 0.85 }}>把這三個數學對齊，就能回答一個問題：<span style={{ color: '#0099FF', fontWeight: 'bold' }}>我的風險，到底押在誰身上？</span></Text>
+  </Box>
+  <Box style={{ position: 'absolute', bottom: 18, left: 64, right: 64, flexDirection: 'row', justifyContent: 'space-between' }}>
+    <Text style={{ fontSize: 14, color: '#E6F0FA', opacity: 0.45 }}>持倉透鏡 HoldingsLens · 1024 投稿</Text>
+    <Text style={{ fontSize: 14, color: '#E6F0FA', opacity: 0.45 }}>04 / 09</Text>
+  </Box>
+</Slide>

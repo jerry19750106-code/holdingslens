@@ -1,0 +1,18 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/report/report",
+    "pages/about/about"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#071322",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "持仓透镜",
+    "backgroundColor": "#071322",
+    "backgroundTextStyle": "dark",
+    "enablePullDownRefresh": false
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

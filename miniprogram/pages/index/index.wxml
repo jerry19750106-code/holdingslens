@@ -1,0 +1,105 @@
+<view class="page">
+
+  <view class="bar">
+    <view class="logo">
+      <view class="dot"></view>
+      <text>{{T.brand}}</text>
+    </view>
+    <view class="lang" bindtap="toggleLang">{{T.langBtn}}</view>
+  </view>
+
+  <view class="hero">
+    <view class="kicker">{{T.kicker}}</view>
+    <view class="h1">{{T.heroTitle}}</view>
+    <view class="sub">{{T.heroSub}}</view>
+  </view>
+
+  <view class="block">
+    <view class="block-h">
+      <text>{{T.presets}}</text>
+      <text class="em">{{T.presetsHint}}</text>
+    </view>
+    <view class="chips">
+      <view
+        class="chip {{item.hot ? 'hot' : ''}}"
+        wx:for="{{presets}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="usePreset"
+      >{{item.label}}</view>
+    </view>
+  </view>
+
+  <view class="block">
+    <view class="block-h">
+      <text>{{T.pickAssets}}</text>
+      <text class="em">{{T.pickHint}}</text>
+    </view>
+    <view class="grid">
+      <view
+        class="asset {{item.sel ? 'sel' : ''}}"
+        wx:for="{{assets}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="toggleAsset"
+      >
+        <view class="inner">
+          <text class="n">{{item.name}}</text>
+          <text class="v">{{item.meta}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="block">
+    <view class="block-h">
+      <text>{{T.codeTitle}}</text>
+      <text class="em">{{T.codeHint}}</text>
+    </view>
+    <view class="code-row">
+      <input
+        class="code-input"
+        type="text"
+        value="{{codeInput}}"
+        placeholder="{{T.codePlaceholder}}"
+        placeholder-class="ph"
+        bindinput="onCodeInput"
+        confirm-type="done"
+        bindconfirm="addByCode"
+      />
+      <view class="code-btn" bindtap="addByCode">{{T.codeBtn}}</view>
+    </view>
+    <view class="code-msg {{codeMsgCls}}" wx:if="{{codeMsg}}">{{codeMsg}}</view>
+  </view>
+
+  <view class="block">
+    <view class="block-h">
+      <text>{{T.selected}}</text>
+      <text class="num">{{totalText}}</text>
+    </view>
+
+    <view class="hold-list" wx:if="{{holdings.length > 0}}">
+      <view class="hold" wx:for="{{holdings}}" wx:key="id">
+        <text class="nm">{{item.name}}</text>
+        <input
+          class="amt"
+          type="number"
+          value="{{item.amount}}"
+          data-id="{{item.id}}"
+          bindinput="onAmount"
+          confirm-type="done"
+        />
+        <view class="del" data-id="{{item.id}}" catchtap="delHold">×</view>
+      </view>
+    </view>
+
+    <view class="empty" wx:else>{{T.emptyHint}}</view>
+  </view>
+
+</view>
+
+<view class="cta-wrap">
+  <button class="cta" bindtap="run" disabled="{{canRun ? false : true}}">
+    {{T.run}} · {{holdings.length}}{{T.unit}}
+  </button>
+</view>

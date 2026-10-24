@@ -1,0 +1,39 @@
+<Slide style={{ width: '1280px', height: '720px', background: '#0A1628', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+  <Box style={{ position: 'absolute', top: -160, left: -120, width: 560, height: 560, background: 'radial-gradient(circle, rgba(0,153,255,0.18) 0%, transparent 70%)' }} />
+  <Box style={{ position: 'absolute', top: 84, left: 0, right: 0, flexDirection: 'row', justifyContent: 'center', gap: 14 }}>
+    <Box style={{ background: 'rgba(0,153,255,0.12)', border: '1px solid rgba(0,153,255,0.4)', borderRadius: 999, paddingTop: 8, paddingBottom: 8, paddingLeft: 20, paddingRight: 20 }}>
+      <Text style={{ fontSize: 15, color: '#7FC4FF' }}>H5 網頁</Text>
+    </Box>
+    <Box style={{ background: 'rgba(0,226,198,0.1)', border: '1px solid rgba(0,226,198,0.4)', borderRadius: 999, paddingTop: 8, paddingBottom: 8, paddingLeft: 20, paddingRight: 20 }}>
+      <Text style={{ fontSize: 15, color: '#6FE3D2' }}>微信小程序</Text>
+    </Box>
+    <Box style={{ background: 'rgba(255,214,102,0.1)', border: '1px solid rgba(255,214,102,0.35)', borderRadius: 999, paddingTop: 8, paddingBottom: 8, paddingLeft: 20, paddingRight: 20 }}>
+      <Text style={{ fontSize: 15, color: '#FFD666' }}>本地腳本</Text>
+    </Box>
+  </Box>
+  <Box style={{ width: 880, alignItems: 'center' }}>
+    <Text style={{ fontSize: 20, color: '#00E2C6', letterSpacing: 3 }}>持倉透鏡 HoldingsLens · 1024 造物挑戰</Text>
+    <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#E6F0FA', marginTop: 22, lineHeight: 1.25, textAlign: 'center' }}>把「風險從哪來」<br />講清楚，比算準漲跌更有用</Text>
+    <Box style={{ width: 60, height: 2, background: '#0099FF', marginTop: 30 }} />
+    <Text style={{ fontSize: 21, color: '#E6F0FA', opacity: 0.78, marginTop: 26, lineHeight: 1.7, textAlign: 'center' }}>體驗方式：H5 網頁隨手查 · 微信小程序隨身帶 · 本地腳本批量回測</Text>
+    <Text style={{ fontSize: 18, color: '#E6F0FA', opacity: 0.55, marginTop: 14, textAlign: 'center' }}>全本地計算 · 持倉不上傳 · 簡繁雙語</Text>
+  </Box>
+  <Box style={{ position: 'absolute', bottom: 80, left: 0, right: 0, flexDirection: 'row', justifyContent: 'center', gap: 40 }}>
+    <Box style={{ alignItems: 'center' }}>
+      <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#0099FF' }}>17 類</Text>
+      <Text style={{ fontSize: 12, color: '#E6F0FA', opacity: 0.5, marginTop: 2 }}>資產類別</Text>
+    </Box>
+    <Box style={{ alignItems: 'center' }}>
+      <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#00E2C6' }}>136 組</Text>
+      <Text style={{ fontSize: 12, color: '#E6F0FA', opacity: 0.5, marginTop: 2 }}>相關係數</Text>
+    </Box>
+    <Box style={{ alignItems: 'center' }}>
+      <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFD666' }}>126 項</Text>
+      <Text style={{ fontSize: 12, color: '#E6F0FA', opacity: 0.5, marginTop: 2 }}>不變量測試</Text>
+    </Box>
+    <Box style={{ alignItems: 'center' }}>
+      <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#7FC4FF' }}>0 筆</Text>
+      <Text style={{ fontSize: 12, color: '#E6F0FA', opacity: 0.5, marginTop: 2 }}>資料上傳</Text>
+    </Box>
+  </Box>
+</Slide>

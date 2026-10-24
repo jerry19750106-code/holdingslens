@@ -1,0 +1,2007 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<!-- 单文件版：引擎已内联，无外部依赖，可离线双击打开 -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071322">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+<title>持仓透镜 · HoldingsLens</title>
+<style>
+:root{
+  --bg:#071322;
+  --surface:#0D1E33;
+  --surface-2:#112742;
+  --line:rgba(122,168,222,.15);
+  --line-2:rgba(122,168,222,.28);
+  --text:#E7F0FB;
+  --dim:#7C93B2;
+  --dim-2:#5A6E8A;
+  --accent:#0099FF;
+  --cyan:#00E2C6;
+  --danger:#FF4D6A;
+  --warn:#FFA53D;
+  --good:#23D18B;
+  --radius:16px;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui,-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:15px;line-height:1.6;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(900px 520px at 12% -8%,rgba(0,153,255,.16),transparent 62%),
+    radial-gradient(760px 460px at 92% 6%,rgba(0,226,198,.09),transparent 60%),
+    linear-gradient(180deg,rgba(7,19,34,0) 0%,rgba(7,19,34,.9) 100%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.35;
+  background-image:linear-gradient(rgba(122,168,222,.05) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(122,168,222,.05) 1px,transparent 1px);
+  background-size:56px 56px;
+  mask-image:radial-gradient(circle at 50% 0%,#000 0%,transparent 72%);
+  -webkit-mask-image:radial-gradient(circle at 50% 0%,#000 0%,transparent 72%);
+}
+.app{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:0 18px 152px}
+
+/* ---------- 顶栏 ---------- */
+.bar{display:flex;align-items:center;justify-content:space-between;padding:18px 0 10px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:650;letter-spacing:.3px;font-size:15px}
+.logo .dot{
+  width:9px;height:9px;border-radius:50%;background:var(--accent);
+  box-shadow:0 0 0 4px rgba(0,153,255,.16),0 0 14px rgba(0,153,255,.75);
+}
+.lang{
+  border:1px solid var(--line-2);background:transparent;color:var(--dim);
+  font-size:12.5px;padding:5px 12px;border-radius:999px;cursor:pointer;
+  font-family:inherit;transition:.18s;
+}
+.lang:hover{color:var(--text);border-color:var(--accent)}
+
+/* ---------- 屏幕切换 ---------- */
+.screen{display:none;animation:rise .34s cubic-bezier(.2,.8,.3,1) both}
+.screen.on{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* ---------- Hero ---------- */
+.hero{padding:26px 0 24px}
+.hero h1{
+  font-size:31px;line-height:1.28;margin:0 0 12px;font-weight:750;letter-spacing:-.5px;
+  background:linear-gradient(96deg,#FFFFFF 8%,#9FD4FF 52%,#5CB8FF 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero p{margin:0;color:var(--dim);font-size:14px;max-width:520px}
+.hero .kicker{
+  display:inline-flex;align-items:center;gap:7px;font-size:11.5px;letter-spacing:.14em;
+  color:var(--cyan);text-transform:uppercase;margin-bottom:14px;font-weight:600;
+}
+.hero .kicker::before{content:"";width:22px;height:1px;background:var(--cyan);opacity:.7}
+
+/* ---------- 区块 ---------- */
+.block{margin:0 0 26px}
+.block-h{
+  display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  margin-bottom:12px;font-size:12.5px;font-weight:650;letter-spacing:.06em;
+  color:var(--dim);text-transform:uppercase;
+}
+.block-h em{font-style:normal;font-size:11.5px;color:var(--dim-2);letter-spacing:0;text-transform:none;font-weight:400}
+.block-h .num{font-family:var(--mono);color:var(--text);font-size:13px;letter-spacing:0;text-transform:none}
+
+/* ---------- 预设 ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:9px}
+.code-row{display:flex;gap:8px}
+.code-row input{flex:1;min-width:0;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--text);font-size:13.5px;font-family:var(--mono);letter-spacing:.5px;outline:none}
+.code-row input:focus{border-color:var(--accent)}
+.code-row input::placeholder{color:var(--dim-2)}
+.code-row button{background:var(--accent);border:none;border-radius:10px;padding:10px 16px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+.code-row button:hover{filter:brightness(1.12)}
+.code-msg{font-size:11.5px;margin-top:7px;min-height:15px;letter-spacing:0;color:var(--dim-2)}
+.code-msg.ok{color:var(--cyan)}
+.code-msg.bad{color:var(--warn)}
+.chip{
+  border:1px solid var(--line);background:rgba(17,39,66,.55);color:var(--text);
+  padding:9px 15px;border-radius:11px;font-size:13px;cursor:pointer;font-family:inherit;
+  transition:.18s;backdrop-filter:blur(6px);
+}
+.chip:hover{border-color:var(--accent);background:rgba(0,153,255,.1);transform:translateY(-1px)}
+.chip.hot{border-color:rgba(0,226,198,.45);color:var(--cyan)}
+
+/* ---------- 资产网格 ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:9px}
+.asset{
+  position:relative;text-align:left;border:1px solid var(--line);border-radius:13px;
+  background:rgba(13,30,51,.66);padding:12px 13px;cursor:pointer;font-family:inherit;
+  transition:.18s;overflow:hidden;
+}
+.asset:hover{border-color:var(--line-2);background:rgba(17,39,66,.9)}
+.asset .n{display:block;font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:3px}
+.asset .v{display:block;font-size:11px;color:var(--dim-2);font-family:var(--mono)}
+.asset.sel{border-color:rgba(0,153,255,.6);background:rgba(0,153,255,.13)}
+.asset.sel::after{
+  content:"";position:absolute;top:9px;right:9px;width:6px;height:6px;border-radius:50%;
+  background:var(--accent);box-shadow:0 0 8px var(--accent);
+}
+
+/* ---------- 持仓列表 ---------- */
+.hold-list{display:flex;flex-direction:column;gap:8px}
+.hold{
+  display:flex;align-items:center;gap:10px;background:rgba(13,30,51,.7);
+  border:1px solid var(--line);border-radius:12px;padding:10px 12px;
+  animation:rise .22s both;
+}
+.hold .nm{flex:1;min-width:0;font-size:13.5px;font-weight:550;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hold .amt{
+  width:112px;background:rgba(7,19,34,.85);border:1px solid var(--line);color:var(--text);
+  border-radius:8px;padding:6px 9px;font-family:var(--mono);font-size:12.5px;text-align:right;
+  outline:none;transition:.16s;
+}
+.hold .amt:focus{border-color:var(--accent)}
+.hold .amt::-webkit-outer-spin-button,.hold .amt::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.hold .unit{font-size:11px;color:var(--dim-2);width:14px}
+.hold .del{
+  border:none;background:transparent;color:var(--dim-2);font-size:17px;line-height:1;
+  cursor:pointer;padding:2px 4px;border-radius:6px;transition:.16s;font-family:inherit;
+}
+.hold .del:hover{color:var(--danger);background:rgba(255,77,106,.1)}
+.empty-hint{
+  border:1px dashed var(--line-2);border-radius:12px;padding:22px;text-align:center;
+  color:var(--dim-2);font-size:13px;
+}
+
+/* ---------- 底部 CTA ---------- */
+.cta-wrap{
+  position:fixed;left:0;right:0;bottom:0;z-index:20;padding:14px 18px calc(14px + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,rgba(7,19,34,0),rgba(7,19,34,.92) 42%);
+  backdrop-filter:blur(10px);
+}
+.cta-wrap .inner{max-width:780px;margin:0 auto}
+.cta{
+  width:100%;border:none;border-radius:14px;padding:15px;font-size:15px;font-weight:700;
+  font-family:inherit;cursor:pointer;color:#04121F;letter-spacing:.02em;
+  background:linear-gradient(96deg,#00D9FF,#0099FF 62%,#0070E0);
+  box-shadow:0 8px 28px rgba(0,153,255,.32);
+  transition:.2s;display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.cta:hover{transform:translateY(-1px);box-shadow:0 11px 34px rgba(0,153,255,.42)}
+.cta:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.cta .sub{font-weight:500;font-size:12.5px;opacity:.72;font-family:var(--mono)}
+.cta.ghost{
+  background:transparent;color:var(--text);border:1px solid var(--line-2);box-shadow:none;
+}
+.cta.ghost:hover{border-color:var(--accent);background:rgba(0,153,255,.08);box-shadow:none}
+
+/* ---------- 报告页 ---------- */
+.back{
+  border:1px solid var(--line);background:transparent;color:var(--dim);
+  border-radius:10px;padding:7px 14px;font-size:12.5px;cursor:pointer;font-family:inherit;
+  margin:6px 0 20px;transition:.18s;
+}
+.back:hover{color:var(--text);border-color:var(--line-2)}
+
+.report-head{
+  display:flex;align-items:center;gap:22px;padding:22px;border-radius:20px;
+  border:1px solid var(--line);background:linear-gradient(140deg,rgba(17,39,66,.9),rgba(13,30,51,.66));
+  margin-bottom:20px;
+}
+.ring{position:relative;width:118px;height:118px;flex:0 0 auto}
+.ring svg{transform:rotate(-90deg)}
+.ring .val{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.ring .val b{font-size:32px;font-weight:750;font-family:var(--mono);letter-spacing:-1px;line-height:1}
+.ring .val s{text-decoration:none;font-size:10px;color:var(--dim-2);letter-spacing:.1em;margin-top:4px}
+.verdict{flex:1;min-width:0}
+.verdict .lab{font-size:11px;letter-spacing:.14em;color:var(--dim-2);text-transform:uppercase;margin-bottom:6px}
+.verdict .ttl{font-size:20px;font-weight:700;margin-bottom:7px;line-height:1.3}
+.verdict .sub{font-size:12.5px;color:var(--dim);line-height:1.55}
+
+/* ---------- 指标 ---------- */
+.metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:26px}
+.metric{
+  border:1px solid var(--line);border-radius:13px;padding:14px;
+  background:rgba(13,30,51,.6);
+}
+.metric .k{font-size:11px;color:var(--dim-2);letter-spacing:.06em;margin-bottom:7px}
+.metric .v{font-size:22px;font-weight:700;font-family:var(--mono);letter-spacing:-.5px;line-height:1.1}
+.metric .x{font-size:11px;color:var(--dim-2);margin-top:5px;font-family:var(--mono)}
+.c-danger{color:var(--danger)}
+.c-warn{color:var(--warn)}
+.c-good{color:var(--good)}
+.c-cyan{color:var(--cyan)}
+
+/* ---------- 对比图 ---------- */
+.cmp{display:flex;flex-direction:column;gap:15px}
+.cmp-row{padding-bottom:14px;border-bottom:1px solid rgba(122,168,222,.07)}
+.cmp-row:last-child{border-bottom:none;padding-bottom:0}
+.cmp-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:7px;gap:10px}
+.cmp-name{font-size:13.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cmp-gap{font-size:11.5px;font-family:var(--mono);flex:0 0 auto}
+.bar{position:relative;height:7px;border-radius:4px;background:rgba(122,168,222,.09);margin-bottom:4px;overflow:hidden}
+.bar i{
+  position:absolute;left:0;top:0;bottom:0;border-radius:4px;display:block;
+  transition:width .55s cubic-bezier(.2,.8,.3,1);
+}
+.bar.w i{background:linear-gradient(90deg,rgba(122,168,222,.42),rgba(122,168,222,.68))}
+.bar.r i{background:linear-gradient(90deg,rgba(0,153,255,.75),rgba(0,226,198,.85))}
+.bar.r.over i{background:linear-gradient(90deg,#FF8A5B,#FF4D6A)}
+.bar.r.under i{background:linear-gradient(90deg,#00E2C6,#23D18B)}
+.bar-labels{display:flex;justify-content:space-between;font-size:10.5px;color:var(--dim-2);font-family:var(--mono)}
+.legend{display:flex;gap:16px;margin-top:14px;font-size:11px;color:var(--dim-2);flex-wrap:wrap}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:14px;height:5px;border-radius:2px;display:block}
+
+/* ---------- 危机测试 ---------- */
+.crisis-wrap{display:flex;gap:14px;align-items:stretch}
+.crisis-bars{display:flex;align-items:flex-end;gap:26px;height:150px;padding:0 8px}
+.cbar{display:flex;flex-direction:column;align-items:center;gap:8px;justify-content:flex-end;height:100%}
+.cbar .stack{width:52px;border-radius:8px 8px 3px 3px;position:relative;transition:height .6s cubic-bezier(.2,.8,.3,1)}
+.cbar .stack.normal{background:linear-gradient(180deg,rgba(0,153,255,.85),rgba(0,153,255,.25))}
+.cbar .stack.crisis{background:linear-gradient(180deg,#FF4D6A,rgba(255,77,106,.28))}
+.cbar .cv{font-size:13px;font-weight:700;font-family:var(--mono)}
+.cbar .cl{font-size:10.5px;color:var(--dim-2);white-space:nowrap}
+.crisis-note{
+  flex:1;border-left:1px solid var(--line);padding-left:16px;display:flex;flex-direction:column;justify-content:center;
+}
+.crisis-note .big{font-size:26px;font-weight:750;font-family:var(--mono);color:var(--danger);letter-spacing:-.5px;line-height:1.1}
+.crisis-note .t{font-size:11px;color:var(--dim-2);margin-top:5px;margin-bottom:9px}
+.crisis-note .d{font-size:12px;color:var(--dim);line-height:1.55}
+
+/* ---------- 模拟 ---------- */
+.sim-card{
+  border:1px solid rgba(0,226,198,.24);border-radius:14px;padding:16px;
+  background:linear-gradient(140deg,rgba(0,226,198,.07),rgba(13,30,51,.6));
+}
+.sim-card .lead{font-size:13px;color:var(--text);line-height:1.65;margin-bottom:14px}
+.sim-card .lead b{color:var(--cyan);font-weight:650}
+.sim-rows{display:grid;grid-template-columns:1fr auto auto;gap:9px 14px;font-size:12.5px;align-items:center}
+.sim-rows .k{color:var(--dim);font-size:12px}
+.sim-rows .a{font-family:var(--mono);color:var(--dim-2);text-align:right}
+.sim-rows .b{font-family:var(--mono);color:var(--good);text-align:right;font-weight:650}
+.sim-rows .b.up{color:var(--cyan)}
+
+/* ---------- 结论 ---------- */
+.findings{display:flex;flex-direction:column;gap:10px}
+.finding{
+  border:1px solid var(--line);border-left-width:3px;border-radius:4px 12px 12px 4px;
+  padding:13px 15px;background:rgba(13,30,51,.62);
+}
+.finding.high{border-left-color:var(--danger)}
+.finding.mid{border-left-color:var(--warn)}
+.finding.low{border-left-color:var(--dim-2)}
+.finding.good{border-left-color:var(--good)}
+.finding .tag{
+  display:inline-block;font-size:10px;letter-spacing:.1em;padding:2px 8px;border-radius:5px;
+  margin-bottom:7px;font-weight:600;
+}
+.finding.high .tag{background:rgba(255,77,106,.15);color:var(--danger)}
+.finding.mid .tag{background:rgba(255,165,61,.13);color:var(--warn)}
+.finding.low .tag{background:rgba(122,147,178,.13);color:var(--dim)}
+.finding.good .tag{background:rgba(35,209,139,.14);color:var(--good)}
+.finding .t{font-size:14px;font-weight:600;line-height:1.5;margin-bottom:5px}
+.finding .d{font-size:12.5px;color:var(--dim);line-height:1.6}
+
+/* ---------- 明细表 ---------- */
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{
+  text-align:right;font-weight:500;color:var(--dim-2);font-size:11px;
+  padding:8px 6px;border-bottom:1px solid var(--line);letter-spacing:.04em;
+}
+.tbl th:first-child{text-align:left}
+.tbl td{padding:11px 6px;border-bottom:1px solid rgba(122,168,222,.06);text-align:right;font-family:var(--mono)}
+.tbl td:first-child{text-align:left;font-family:inherit;font-weight:550;font-size:13px}
+.tbl tr:last-child td{border-bottom:none}
+.tbl .neg{color:var(--cyan)}
+.tbl .over{color:var(--danger)}
+
+/* ---------- 方法说明 ---------- */
+.method{border:1px solid var(--line);border-radius:12px;padding:0;margin:0 0 20px;background:rgba(13,30,51,.45)}
+.method summary{
+  padding:14px 16px;cursor:pointer;font-size:12.5px;color:var(--dim);list-style:none;
+  display:flex;align-items:center;justify-content:space-between;font-weight:550;
+}
+.method summary::-webkit-details-marker{display:none}
+.method summary::after{content:"＋";color:var(--dim-2);font-size:14px}
+.method[open] summary::after{content:"−"}
+.method .body{padding:0 16px 16px;font-size:12px;color:var(--dim);line-height:1.75}
+.method .body code{
+  font-family:var(--mono);background:rgba(0,153,255,.1);color:#8FD0FF;
+  padding:1px 6px;border-radius:4px;font-size:11.5px;
+}
+.method .body h4{margin:14px 0 6px;font-size:12px;color:var(--text);font-weight:650}
+.method .body h4:first-child{margin-top:0}
+.method .body ul{margin:6px 0;padding-left:17px}
+.method .body li{margin-bottom:4px}
+
+.disclaimer{
+  font-size:11px;color:var(--dim-2);line-height:1.7;padding:14px 16px;
+  border:1px solid var(--line);border-radius:12px;margin-bottom:20px;
+  background:rgba(255,165,61,.035);
+}
+
+/* ---------- 分享卡 ---------- */
+.overlay{
+  position:fixed;inset:0;z-index:60;background:rgba(4,10,18,.88);backdrop-filter:blur(8px);
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.overlay.on{display:flex}
+.overlay .panel{max-width:420px;width:100%;text-align:center}
+.overlay canvas{width:100%;height:auto;border-radius:14px;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.overlay .acts{display:flex;gap:10px;margin-top:16px}
+
+@media(max-width:600px){
+  .hero h1{font-size:26px}
+  .grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .report-head{flex-direction:column;text-align:center;gap:14px;padding:20px 16px}
+  .verdict .lab{text-align:center}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .crisis-wrap{flex-direction:column;gap:18px}
+  .crisis-note{border-left:none;border-top:1px solid var(--line);padding-left:0;padding-top:14px}
+  .crisis-bars{justify-content:center}
+  .hold .amt{width:92px}
+  .app{padding-left:14px;padding-right:14px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="bar">
+    <div class="logo"><span class="dot"></span><span data-t="brand">持仓透镜</span></div>
+    <button class="lang" id="langBtn">繁</button>
+  </header>
+
+  <!-- ============ 输入屏 ============ -->
+  <section class="screen on" id="s-input">
+    <div class="hero">
+      <div class="kicker" data-t="kicker">HoldingsLens · 风险结构透视</div>
+      <h1 id="heroTitle">你以为的分散，<br>和实际的分散</h1>
+      <p data-t="heroSub">输入持仓金额。它会算出每个仓位对组合波动的真实贡献 —— 你会发现，资金占比最小的那个，可能正在决定你的命运。</p>
+    </div>
+
+    <div class="block">
+      <div class="block-h"><span data-t="presets">快速试算</span><em data-t="presetsHint">一键载入典型组合</em></div>
+      <div class="chips" id="presetRow"></div>
+    </div>
+
+    <div class="block">
+      <div class="block-h"><span data-t="pickAssets">选择持仓类别</span><em data-t="pickHint">点击加入</em></div>
+      <div class="grid" id="assetGrid"></div>
+    </div>
+
+    <div class="block">
+      <div class="block-h"><span data-t="codeTitle">按代码 / 名称添加</span><em data-t="codeHint">支持场内 ETF、场外基金</em></div>
+      <div class="code-row">
+        <input id="codeInput" type="text" autocomplete="off" spellcheck="false" placeholder="">
+        <button id="btnAddCode" data-t="codeBtn">添加</button>
+      </div>
+      <div class="code-msg" id="codeMsg"></div>
+    </div>
+
+    <div class="block">
+      <div class="block-h">
+        <span data-t="selected">我的持仓</span>
+        <span class="num" id="totalLabel">—</span>
+      </div>
+      <div class="hold-list" id="holdList"></div>
+      <div class="empty-hint" id="emptyHint" data-t="emptyHint">还没有持仓。点上面任意类别，或选一个典型组合。</div>
+    </div>
+
+    <div class="cta-wrap">
+      <div class="inner">
+        <button class="cta" id="btnRun" disabled></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 报告屏 ============ -->
+  <section class="screen" id="s-report">
+    <button class="back" id="btnBack" data-t="back">← 重新输入</button>
+
+    <div class="report-head">
+      <div class="ring">
+        <svg width="118" height="118" viewBox="0 0 118 118">
+          <circle cx="59" cy="59" r="51" fill="none" stroke="rgba(122,168,222,.12)" stroke-width="9"/>
+          <circle id="ringArc" cx="59" cy="59" r="51" fill="none" stroke="#0099FF" stroke-width="9"
+                  stroke-linecap="round" stroke-dasharray="320.4" stroke-dashoffset="320.4"
+                  style="transition:stroke-dashoffset .9s cubic-bezier(.2,.8,.3,1),stroke .4s"/>
+        </svg>
+        <div class="val"><b id="scoreNum">0</b><s data-t="scoreLabel">健康分</s></div>
+      </div>
+      <div class="verdict">
+        <div class="lab" data-t="verdictLab">结构评估</div>
+        <div class="ttl" id="verdictTitle"></div>
+        <div class="sub" id="verdictSub"></div>
+      </div>
+    </div>
+
+    <div class="metrics" id="metrics"></div>
+
+    <div class="block">
+      <div class="block-h"><span data-t="cmpTitle">资金占比 vs 风险占比</span><em data-t="cmpHint">上面的条是钱，下面的是风险</em></div>
+      <div class="cmp" id="cmpChart"></div>
+      <div class="legend">
+        <span><i style="background:rgba(122,168,222,.6)"></i><span data-t="lgFund">资金占比</span></span>
+        <span><i style="background:linear-gradient(90deg,#FF8A5B,#FF4D6A)"></i><span data-t="lgRiskHigh">风险占比高于资金（错配）</span></span>
+        <span><i style="background:linear-gradient(90deg,#00E2C6,#23D18B)"></i><span data-t="lgRiskLow">低于资金（压舱石）</span></span>
+      </div>
+    </div>
+
+    <div class="block">
+      <div class="block-h"><span data-t="crisisTitle">危机情景压力测试</span><em data-t="crisisHint">假设相关性趋同</em></div>
+      <div class="crisis-wrap">
+        <div class="crisis-bars" id="crisisBars"></div>
+        <div class="crisis-note">
+          <div class="big" id="decayNum">—</div>
+          <div class="t" data-t="decayLab">分散效果蒸发</div>
+          <div class="d" id="decayNote"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block" id="simBlock">
+      <div class="block-h"><span data-t="simTitle">结构优化模拟</span><em data-t="simHint">只动结构，不改风格</em></div>
+      <div id="simBody"></div>
+    </div>
+
+    <div class="block">
+      <div class="block-h"><span data-t="findTitle">诊断结论</span></div>
+      <div class="findings" id="findings"></div>
+    </div>
+
+    <div class="block">
+      <div class="block-h"><span data-t="tableTitle">持仓明细</span></div>
+      <div style="overflow-x:auto"><table class="tbl" id="tbl"></table></div>
+    </div>
+
+    <details class="method">
+      <summary data-t="methodTitle">计算方法与假设</summary>
+      <div class="body" id="methodBody"></div>
+    </details>
+
+    <div class="disclaimer" data-t="disclaimer"></div>
+
+    <button class="cta ghost" id="btnShare" data-t="share">生成分享卡</button>
+  </section>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="panel">
+    <canvas id="shareCanvas" width="1080" height="1440"></canvas>
+    <div class="acts">
+      <button class="cta ghost" id="btnCloseShare" data-t="close">关闭</button>
+      <button class="cta" id="btnDownload" data-t="download">保存图片</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---- assetlib.js ---- */
+/* ============================================================
+ * X-Ray Asset Library  —  资产风险参数库
+ * ------------------------------------------------------------
+ * 参数口径：
+ *   vol  = 年化波动率 (%)，基于该类资产长期（10年以上）月度收益估算
+ *   mdd  = 历史极端最大回撤 (%)，取该资产近 20 年最深一次
+ *   corr = 长期相关系数，取主要代表指数的月度收益相关
+ *
+ * 说明：参数为「类别级」长期统计量，非实时行情。
+ *      目的是度量结构性风险，不用于预测短期涨跌。
+ * ========================================================== */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.XRayAssets = factory();
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+
+  /* ---- 慢变量：波动率 / 最大回撤 / 分类 ---- */
+  var ASSETS = [
+    { id: 'cn_broad',  name: '中国A股·宽基',   nameTw: '中國A股·寬基',   vol: 20,  mdd: -46,  kind: 'equity',  region: 'CN',    hint: '沪深300 / 中证A500' },
+    { id: 'cn_growth', name: '中国A股·成长',   nameTw: '中國A股·成長',   vol: 28,  mdd: -70,  kind: 'equity',  region: 'CN',    hint: '创业板 / 科创50 / 半导体 / 新能源' },
+    { id: 'cn_small',  name: '中国A股·中小盘', nameTw: '中國A股·中小盤', vol: 25,  mdd: -62,  kind: 'equity',  region: 'CN',    hint: '中证500 / 中证1000 / 北证' },
+    { id: 'cn_div',    name: '中国A股·红利',   nameTw: '中國A股·紅利',   vol: 16,  mdd: -42,  kind: 'equity',  region: 'CN',    hint: '红利低波 / 银行 / 消费 / 公用事业' },
+    { id: 'hk',        name: '港股',           nameTw: '港股',           vol: 24,  mdd: -66,  kind: 'equity',  region: 'HK',    hint: '恒生 / 恒生科技 / 中概互联' },
+    { id: 'tw',        name: '台股',           nameTw: '台股',           vol: 22,  mdd: -56,  kind: 'equity',  region: 'TW',    hint: '台湾50 / 高股息 / 半导体相关' },
+    { id: 'us',        name: '美股·宽基',      nameTw: '美股·寬基',      vol: 16,  mdd: -55,  kind: 'equity',  region: 'US',    hint: '标普500 / 道琼斯 / 全市场' },
+    { id: 'us_tech',   name: '美股·科技',      nameTw: '美股·科技',      vol: 24,  mdd: -52,  kind: 'equity',  region: 'US',    hint: '纳斯达克100 / 费半 / AI 主题' },
+    { id: 'jp_eu',     name: '日欧股',         nameTw: '日歐股',         vol: 18,  mdd: -58,  kind: 'equity',  region: 'DM',    hint: '日经225 / 欧洲斯托克' },
+    { id: 'em',        name: '新兴市场',       nameTw: '新興市場',       vol: 22,  mdd: -60,  kind: 'equity',  region: 'EM',    hint: '印度 / 越南 / 拉美' },
+    { id: 'reits',     name: '不动产REITs',    nameTw: '不動產REITs',    vol: 18,  mdd: -65,  kind: 'reits',   region: 'GL',    hint: '公募REITs / 房地产信托' },
+    { id: 'gold',      name: '黄金',           nameTw: '黃金',           vol: 16,  mdd: -45,  kind: 'metal',   region: 'GL',    hint: '黄金ETF / 实物金' },
+    { id: 'commod',    name: '大宗商品',       nameTw: '大宗商品',       vol: 22,  mdd: -62,  kind: 'commod',  region: 'GL',    hint: '原油 / 有色 / 农产品' },
+    { id: 'bond_cn',   name: '中国债券',       nameTw: '中國債券',       vol: 4,   mdd: -8,   kind: 'bond',    region: 'CN',    hint: '国债 / 政金债 / 信用债 / 转债' },
+    { id: 'bond_us',   name: '美债',           nameTw: '美債',           vol: 6,   mdd: -18,  kind: 'bond',    region: 'US',    hint: '美国国债 / 投资级债' },
+    { id: 'crypto',    name: '加密资产',       nameTw: '加密資產',       vol: 60,  mdd: -83,  kind: 'crypto',  region: 'GL',    hint: 'BTC / ETH' },
+    { id: 'cash',      name: '现金/货币',      nameTw: '現金/貨幣',      vol: 0.5, mdd: -0.5, kind: 'cash',    region: 'GL',    hint: '货币基金 / 存款 / 短债' }
+  ];
+
+  /* ---- 相关系数矩阵（只存上三角，按行拼接，共 136 项） ---- */
+  var UPPER = [
+    /* 0  cn_broad  */  0.88, 0.90, 0.78, 0.72, 0.55, 0.28, 0.30, 0.32, 0.45, 0.35, 0.08, 0.18, -0.05, 0.00, 0.22, 0.00,
+    /* 1  cn_growth */  0.86, 0.62, 0.68, 0.58, 0.32, 0.40, 0.34, 0.48, 0.30, 0.05, 0.15, -0.12, -0.05, 0.28, 0.00,
+    /* 2  cn_small  */  0.70, 0.70, 0.55, 0.28, 0.33, 0.30, 0.46, 0.32, 0.06, 0.20, -0.08, -0.02, 0.25, 0.00,
+    /* 3  cn_div    */  0.72, 0.55, 0.30, 0.28, 0.35, 0.45, 0.45, 0.10, 0.22, 0.02, 0.02, 0.20, 0.00,
+    /* 4  hk        */  0.62, 0.45, 0.48, 0.50, 0.60, 0.50, 0.10, 0.20, -0.02, 0.02, 0.30, 0.00,
+    /* 5  tw        */  0.60, 0.68, 0.40, 0.55, 0.45, 0.08, 0.20, -0.02, 0.05, 0.35, 0.00,
+    /* 6  us        */  0.85, 0.78, 0.65, 0.60, 0.05, 0.20, -0.02, 0.15, 0.40, 0.00,
+    /* 7  us_tech   */  0.65, 0.60, 0.50, 0.06, 0.15, -0.05, 0.10, 0.50, 0.00,
+    /* 8  jp_eu     */  0.62, 0.52, 0.08, 0.22, -0.02, 0.10, 0.35, 0.00,
+    /* 9  em        */  0.45, 0.12, 0.35, 0.00, 0.05, 0.40, 0.00,
+    /* 10 reits     */  0.15, 0.20, 0.10, 0.25, 0.30, 0.00,
+    /* 11 gold      */  0.45, 0.10, 0.25, 0.20, 0.00,
+    /* 12 commod    */  -0.10, -0.05, 0.25, 0.00,
+    /* 13 bond_cn   */  0.25, -0.05, 0.10,
+    /* 14 bond_us   */  0.05, 0.20,
+    /* 15 crypto    */  0.00
+  ];
+
+  var N = ASSETS.length;
+  var IDX = {};
+  for (var i = 0; i < N; i++) IDX[ASSETS[i].id] = i;
+
+  /* 展开成 N×N 对称矩阵 */
+  var CORR = [];
+  (function () {
+    var k = 0, r, c;
+    for (r = 0; r < N; r++) {
+      CORR[r] = [];
+      for (c = 0; c < N; c++) CORR[r][c] = 0;
+      CORR[r][r] = 1;
+    }
+    for (r = 0; r < N; r++) {
+      for (c = r + 1; c < N; c++) {
+        var v = UPPER[k++];
+        CORR[r][c] = v;
+        CORR[c][r] = v;
+      }
+    }
+    if (k !== UPPER.length) throw new Error('相关系数矩阵长度不匹配: ' + k + ' vs ' + UPPER.length);
+  })();
+
+  /* ---- 常用代码 / 名称别名 → 资产类别 ---- */
+  var ALIASES = {
+    /* A股宽基 */
+    '510300': 'cn_broad', '159919': 'cn_broad', '510310': 'cn_broad', '563300': 'cn_broad', '159352': 'cn_broad',
+    '沪深300': 'cn_broad', '中证A500': 'cn_broad', '上证50': 'cn_broad', '510050': 'cn_broad', '宽基': 'cn_broad',
+    /* A股成长 */
+    '159915': 'cn_growth', '588000': 'cn_growth', '588080': 'cn_growth', '512480': 'cn_growth', '515790': 'cn_growth',
+    '512660': 'cn_growth', '516160': 'cn_growth', '512000': 'cn_growth', '159995': 'cn_growth', '159819': 'cn_growth',
+    '创业板': 'cn_growth', '科创': 'cn_growth', '半导体': 'cn_growth', '新能源': 'cn_growth', '军工': 'cn_growth',
+    /* A股中小盘 */
+    '510500': 'cn_small', '512100': 'cn_small', '159922': 'cn_small', '5633001000': 'cn_small',
+    '中证500': 'cn_small', '中证1000': 'cn_small', '中小盘': 'cn_small', '北证': 'cn_small',
+    /* A股红利 */
+    '510880': 'cn_div', '515180': 'cn_div', '512890': 'cn_div', '159928': 'cn_div', '512690': 'cn_div',
+    '512800': 'cn_div', '红利': 'cn_div', '高股息': 'cn_div', '消费': 'cn_div', '银行': 'cn_div',
+    /* 港股 */
+    '510900': 'hk', '159920': 'hk', '513180': 'hk', '513050': 'hk', '159740': 'hk', '513660': 'hk',
+    '恒生': 'hk', '恒生科技': 'hk', '中概': 'hk', '港股': 'hk', 'H股': 'hk',
+    /* 台股 */
+    '0050': 'tw', '0056': 'tw', '00878': 'tw', '00919': 'tw', '00929': 'tw', '00940': 'tw',
+    '006208': 'tw', '00881': 'tw', '00891': 'tw', '00982A': 'tw', '00982': 'tw',
+    '台湾50': 'tw', '台股': 'tw', '元大台灣50': 'tw',
+    /* 美股宽基 */
+    '513500': 'us', 'SPY': 'us', 'VOO': 'us', 'IVV': 'us', 'VTI': 'us',
+    '标普500': 'us', '标普': 'us', '美股': 'us',
+    /* 美股科技 */
+    '513100': 'us_tech', '159941': 'us_tech', '513300': 'us_tech', 'QQQ': 'us_tech', 'SMH': 'us_tech',
+    '纳指': 'us_tech', '纳斯达克': 'us_tech', '费半': 'us_tech', '科技': 'us_tech',
+    /* 日欧 */
+    '513520': 'jp_eu', '513030': 'jp_eu', '513880': 'jp_eu', 'EWJ': 'jp_eu', 'VGK': 'jp_eu',
+    '日经': 'jp_eu', '德国': 'jp_eu', '欧洲': 'jp_eu',
+    /* 新兴市场 */
+    'EEM': 'em', 'VWO': 'em', 'INDA': 'em', '印度': 'em', '越南': 'em', '新兴': 'em',
+    /* REITs */
+    'REITs': 'reits', 'reits': 'reits', '不动产': 'reits', 'VNQ': 'reits',
+    /* 黄金 */
+    '518880': 'gold', '159934': 'gold', '159937': 'gold', 'GLD': 'gold', 'IAU': 'gold',
+    '黄金': 'gold', '金': 'gold',
+    /* 大宗 */
+    '162411': 'commod', '159985': 'commod', 'USO': 'commod', 'DBC': 'commod',
+    '原油': 'commod', '油': 'commod', '大宗': 'commod', '有色': 'commod',
+    /* 中国债券 */
+    '511010': 'bond_cn', '511260': 'bond_cn', '511380': 'bond_cn', '511090': 'bond_cn',
+    '国债': 'bond_cn', '债': 'bond_cn', '债券': 'bond_cn', '信用债': 'bond_cn', '转债': 'bond_cn',
+    /* 美债 */
+    'TLT': 'bond_us', 'IEF': 'bond_us', 'SHY': 'bond_us', '美债': 'bond_us',
+    /* 加密 */
+    'BTC': 'crypto', 'ETH': 'crypto', 'IBIT': 'crypto', '比特币': 'crypto', '加密': 'crypto',
+    /* 现金 */
+    '511990': 'cash', '511880': 'cash', '现金': 'cash', '货币': 'cash', '存款': 'cash', 'CASH': 'cash',
+    /* ---- 场外基金代码（联接/指数基金，6 位，非场内交易）----
+     * 来源：用户自有 ETF-Monitor 系统的「场外基金代码 → 名称 → 代理 ETF」对照表
+     * （analyze_entry_v2.py / backfill_flow5_v54.py / actual_returns 三处交叉一致）。
+     * 代理 ETF 均为已在上面登记的场内代码，故按代理 ETF 的类别归并。
+     * 类别判定为「类别级近似」：按基金主题的风险特征归入最接近的资产类别，
+     * 与工具整体的类别级口径一致（详见参数表「口径说明」）。 */
+    '000216': 'gold',      /* 华安黄金联接         → sh518880 黄金ETF        */
+    '004070': 'cn_growth',  /* 券商/证券主题        → sz159842 证券ETF（高 beta，按最接近的风险画像归入成长） */
+    '004432': 'commod',     /* 有色金属主题         → sh512400 有色ETF        */
+    '005693': 'cn_growth',  /* 军工主题             → sh512680 军工ETF        */
+    '006479': 'us_tech',    /* 广发纳指联接         → sz159941 纳指ETF        */
+    '007466': 'cn_div',     /* 红利低波主题         → sh512890 红利低波ETF    */
+    '008888': 'cn_growth',  /* 华夏芯片联接         → sz159995 芯片ETF        */
+    '011613': 'cn_growth',  /* 科创50 联接          → sh588000 科创50ETF      */
+    '013180': 'cn_growth',  /* 电池/新能源主题      → sz159755 电池ETF        */
+    '016008': 'cn_growth',  /* 消费电子主题         → sz159779 消费电子ETF    */
+    '016185': 'cn_div',     /* 电力/公用事业主题    → sz159611 电力ETF        */
+    '018135': 'cn_growth',  /* 大数据主题           → sh515400 大数据ETF      */
+    '018177': 'cn_growth',  /* 科创增强             → sh588000 科创50ETF      */
+    '018345': 'cn_growth',  /* 机器人主题           → sh562500 机器人ETF      */
+    '018966': 'us_tech',    /* 纳指 QDII            → sh513100 纳指ETF        */
+    '019072': 'cn_growth',  /* 通信设备主题         → sz159695 通信ETF        */
+    '019141': 'cn_div',     /* 电信运营商联接       → sh563010 电信ETF（运营商属高股息价值类） */
+    '020356': 'cn_growth',  /* 半导体材料设备主题   → sh562590 半导体材料ETF  */
+    '025856': 'cn_broad',   /* 电网设备主题         → sz159326 电网设备ETF（按宽基权益风险画像归入） */
+    /* 台股代码带交易所后缀的写法（天天基金/复权常见格式） */
+    '00919.TW': 'tw', '00929.TW': 'tw', '00982A.TW': 'tw', '0050.TW': 'tw', '006208.TW': 'tw'
+  };
+
+  /* ---- 压力测试假设：危机情景下的相关性 ----
+   * 依据：历次系统性下跌中风险资产的相关性显著抬升（相关性趋同），
+   *      黄金与债券的避险属性不稳定（2022 年出现股债双杀）。
+   * 这是「假设」而非「预测」，用于测试组合的脆弱性。
+   *
+   * 建模铁律：危机情景下相关性只允许上升，不允许下降。
+   *   理由：压力测试若允许某些资产对「变得更不相关」，
+   *        组合会因分散改善而显得更安全，这与压力测试目的相反。
+   *   数学后果：Σ_crisis − Σ_normal 的每个非对角元 ≥ 0，
+   *        故对任意正权重 wᵀ(Σ_crisis−Σ_normal)w ≥ 0，
+   *        严格保证 σ_crisis ≥ σ_normal。 */
+  function crisisRho(i, j, base) {
+    var a = ASSETS[i], b = ASSETS[j], r;
+    if (a.kind === 'cash' || b.kind === 'cash') {
+      /* 现金/货币：危机中不会与其他资产「变得更相关」（本就是避风港），
+       * 但建模铁律要求「只升不降」→ 维持原有相关水平。
+       * 注意 i === j（对角线）时 base = 1，必须原样返回；
+       * 旧版此处直接 return 0，造成两个违反铁律的后果：
+       *   ① 现金-债券 ρ 由 0.10 降到 0（相关下降 → 方差变小 → 危机波动反而更低）
+       *   ② 现金对角线归零 → 全现金组合危机波动变成 0（0.5% → 0%）
+       * 两者都让压力测试「变得更安全」，与压力测试目的相反。 */
+      return base;
+    }
+    if (a.kind === 'metal' || b.kind === 'metal') {
+      /* 黄金：危机初期避险，流动性危机时同样被抛售 → 弱相关但会抬升 */
+      r = clamp(base * 0.6 + 0.10, -0.10, 0.40);
+    } else if (a.kind === 'bond' || b.kind === 'bond') {
+      /* 债券：股债跷跷板在通胀型冲击中失效 → 中低正相关 */
+      r = clamp(0.10 + base * 0.30, 0.00, 0.35);
+    } else {
+      /* 风险资产：相关性趋同，下限 0.78 */
+      r = clamp(Math.max(base, 0.78), 0, 0.95);
+    }
+    return Math.max(base, r);
+  }
+
+  function clamp(v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); }
+
+  return {
+    ASSETS: ASSETS,
+    CORR: CORR,
+    IDX: IDX,
+    ALIASES: ALIASES,
+    N: N,
+    crisisRho: crisisRho,
+    clamp: clamp,
+    byId: function (id) { return ASSETS[IDX[id]]; }
+  };
+});
+
+
+/* ---- engine.js ---- */
+/* ============================================================
+ * X-Ray Engine  —  组合风险归因引擎
+ * ------------------------------------------------------------
+ * 核心数学：
+ *   Σ_ij = ρ_ij · σ_i · σ_j                （协方差矩阵）
+ *   σ_p  = sqrt(wᵀΣw)                       （组合年化波动率）
+ *   MCR_i = (Σw)_i / σ_p                    （边际风险贡献）
+ *   RC_i  = w_i · MCR_i                     （风险贡献，ΣRC_i = σ_p）
+ *   rcPct_i = RC_i / σ_p                    （风险占比，Σ = 100%）
+ *   HHI  = Σ w_i²  →  N_eff = 1 / HHI       （有效持仓数）
+ *
+ * 关键不变量（由 tests/engine.test.js 强制验证）：
+ *   ① Σ rcPct_i = 1
+ *   ② σ_p ≤ Σ w_i·σ_i                       （分散不会放大波动）
+ *   ③ 权重顺序无关
+ * ========================================================== */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) {
+    module.exports = factory(require('./assetlib.js'));
+  } else {
+    root.XRayEngine = factory(root.XRayAssets);
+  }
+})(typeof globalThis !== 'undefined' ? globalThis : this, function (LIB) {
+  'use strict';
+
+  var ASSETS = LIB.ASSETS, CORR = LIB.CORR, IDX = LIB.IDX, N = LIB.N;
+  var clamp = LIB.clamp;
+
+  /* ---------- 构建协方差矩阵 ---------- */
+  function buildCov(crisis) {
+    var cov = [], i, j, si, sj, rho;
+    for (i = 0; i < N; i++) cov[i] = new Array(N);
+    for (i = 0; i < N; i++) {
+      si = ASSETS[i].vol / 100;
+      for (j = i; j < N; j++) {
+        sj = ASSETS[j].vol / 100;
+        rho = crisis ? LIB.crisisRho(i, j, CORR[i][j]) : CORR[i][j];
+        cov[i][j] = cov[j][i] = rho * si * sj;
+      }
+    }
+    return cov;
+  }
+  var COV_NORMAL = buildCov(false);
+  var COV_CRISIS = buildCov(true);
+
+  /* ---------- 单一情景下的组合指标 ---------- */
+  function solve(ids, weights, cov) {
+    var m = ids.length, i, j, k, a, b;
+    var w = weights;
+
+    /* Σw */
+    var Sw = new Array(m);
+    for (i = 0; i < m; i++) {
+      var acc = 0;
+      for (j = 0; j < m; j++) acc += cov[ids[i]][ids[j]] * w[j];
+      Sw[i] = acc;
+    }
+
+    /* wᵀΣw */
+    var variance = 0;
+    for (i = 0; i < m; i++) variance += w[i] * Sw[i];
+    if (variance < 0) variance = 0;              /* 数值保护 */
+    var sigma = Math.sqrt(variance);             /* 小数（0.18 = 18%） */
+
+    /* 加权平均波动（无分散基准） */
+    var wAvg = 0;
+    for (i = 0; i < m; i++) wAvg += w[i] * (ASSETS[ids[i]].vol / 100);
+
+    /* 风险贡献 */
+    var rc = new Array(m), rcPct = new Array(m);
+    for (i = 0; i < m; i++) {
+      rc[i] = sigma > 1e-12 ? w[i] * Sw[i] / sigma : 0;
+      rcPct[i] = sigma > 1e-12 ? rc[i] / sigma : (1 / m);
+    }
+
+    var diversification = wAvg - sigma;
+    var divRatio = wAvg > 1e-12 ? diversification / wAvg : 0;
+
+    return {
+      sigma: sigma,
+      var95: 1.645 * sigma,                      /* 年度 95% VaR（参数法） */
+      wAvgVol: wAvg,
+      diversification: diversification,
+      divRatio: divRatio,
+      rc: rc,
+      rcPct: rcPct
+    };
+  }
+
+  /* ---------- 有效押注数 ENB（Effective Number of Bets） ----------
+   * 用途：检测「伪分散」——名义上持有多笔，风险意义上却是同一笔押注。
+   * 为什么需要它：nEff = 1/Σw² 只看资金权重，完全不看相关性——等权重买
+   * 5 只高度相关的股票，nEff 照样是 5.0；而 99.9% 押加密 + 0.03%×3 笔零头，
+   * nEff 也只有 1.0，但旧版未加权的 ENB 却会算出 3.9。
+   * ENB = 1 / (wᵀCw)，C 为持仓资产相关系数矩阵，w 为资金权重：
+   *   全部完全相关 → 1
+   *   互不相关 → nEff（与资金集中度口径一致）
+   * 上限截为 nEff：负相关的对冲效果由「负风险贡献」另行呈现，
+   * 不截的话股债 50/50 会算出 2.27 > 持仓 2 笔，评审会觉得矛盾。 */
+  function effectiveBets(ids, weights, nEff) {
+    var m = ids.length, q = 0, i, j;
+    if (m <= 1) return 1;
+    for (i = 0; i < m; i++)
+      for (j = 0; j < m; j++) q += weights[i] * weights[j] * CORR[ids[i]][ids[j]];
+    if (q <= 1e-12) return nEff;
+    return Math.max(1, Math.min(1 / q, nEff));
+  }
+
+  /* ---------- 主入口 ---------- */
+  function analyze(holdings, opts) {
+    var lang = (opts && opts.lang === 'tw') ? 'tw' : 'cn';
+    if (!holdings || !holdings.length) return null;
+
+    /* 1. 合并同类资产
+     * 容纳入参形式：资产 id（cn_growth）、场内/场外代码（510300、008888）、
+     * 资产名称（黄金）——先精确匹配 id，再走 resolve 映射，最后合并同类。
+     * 这样引擎被单独引用时也能直接吃代码，不必调用方先转换。 */
+    var merged = {}, order = [], i, h, id;
+    for (i = 0; i < holdings.length; i++) {
+      h = holdings[i];
+      if (!h) continue;
+      var raw = h.id;
+      id = (raw !== undefined && IDX[raw] !== undefined) ? raw : resolve(raw);
+      if (!id) continue;
+      var amt = Number(h.amount);
+      if (!isFinite(amt) || amt <= 0) continue;
+      if (merged[id] === undefined) { merged[id] = 0; order.push(id); }
+      merged[id] += amt;
+    }
+    if (!order.length) return null;
+
+    /* 2. 归一化权重 */
+    var total = 0;
+    for (i = 0; i < order.length; i++) total += merged[order[i]];
+    if (total <= 0) return null;
+
+    var ids = order.map(function (x) { return IDX[x]; });
+    var weights = order.map(function (x) { return merged[x] / total; });
+    var m = ids.length;
+
+    /* 3. 正常情景 + 危机情景 */
+    var normal = solve(ids, weights, COV_NORMAL);
+    var crisis = solve(ids, weights, COV_CRISIS);
+
+    /* 4. 集中度
+     * nEff = 1/Σw²：只度量「资金权重集中度」，与相关性无关。
+     * enb = 1/(wᵀCw)：相关性调整的权重版有效押注数，同时受资金权重
+     * 与相关性影响——等权重买 5 只高相关股票，nEff 仍是 5.0，enb 掉到 1.2；
+     * 99.9% 押加密 + 三笔零头，nEff 1.0，enb 同样趋近 1。 */
+    var hhi = 0;
+    for (i = 0; i < m; i++) hhi += weights[i] * weights[i];
+    var nEff = hhi > 0 ? 1 / hhi : 1;
+    var enb = effectiveBets(ids, weights, nEff);
+
+    /* 5. 极端回撤估算（相关性趋同时，组合回撤 ≈ 各类别回撤的市值加权） */
+    var mddWeighted = 0;
+    for (i = 0; i < m; i++) mddWeighted += weights[i] * (ASSETS[ids[i]].mdd / 100);
+    /* 危机波动放大则回撤加深（波动比 >1 时按 0.25 弹性放大，上限 1.35 倍） */
+    var volRatio = normal.sigma > 1e-12 ? crisis.sigma / normal.sigma : 1;
+    var stressMult = clamp(1 + (volRatio - 1) * 0.25, 1, 1.35);
+    var mddStress = mddWeighted * stressMult;
+
+    /* 6. 隐性重叠：高相关且都够重 */
+    var overlaps = [];
+    for (i = 0; i < m; i++) {
+      for (var j = i + 1; j < m; j++) {
+        var rho = CORR[ids[i]][ids[j]];
+        var wA = weights[i], wB = weights[j];
+        if (rho >= 0.75 && Math.min(wA, wB) >= 0.05) {
+          overlaps.push({
+            a: order[i], b: order[j],
+            aName: lang === 'tw' ? ASSETS[ids[i]].nameTw : ASSETS[ids[i]].name,
+            bName: lang === 'tw' ? ASSETS[ids[j]].nameTw : ASSETS[ids[j]].name,
+            rho: rho,
+            combined: wA + wB,
+            aWeight: wA, bWeight: wB
+          });
+        }
+      }
+    }
+    overlaps.sort(function (x, y) { return (y.rho * y.combined) - (x.rho * x.combined); });
+    overlaps = overlaps.slice(0, 3);
+
+    /* 7. 风险错配：资金占比与风险占比偏离 */
+    var mismatches = [];
+    for (i = 0; i < m; i++) {
+      var gap = normal.rcPct[i] - weights[i];
+      mismatches.push({
+        id: order[i],
+        name: lang === 'tw' ? ASSETS[ids[i]].nameTw : ASSETS[ids[i]].name,
+        wPct: weights[i], rcPct: normal.rcPct[i],
+        gap: gap
+      });
+    }
+    mismatches.sort(function (x, y) { return Math.abs(y.gap) - Math.abs(x.gap); });
+
+    /* 8. 地域集中 */
+    var regionMap = {};
+    for (i = 0; i < m; i++) {
+      var rg = ASSETS[ids[i]].region;
+      regionMap[rg] = (regionMap[rg] || 0) + weights[i];
+    }
+    var topRegion = null, topRegionW = 0;
+    for (var k in regionMap) {
+      if (regionMap[k] > topRegionW) { topRegionW = regionMap[k]; topRegion = k; }
+    }
+
+    /* 9. 分散衰减 */
+    var divDecay = normal.divRatio > 1e-6
+      ? (normal.divRatio - crisis.divRatio) / normal.divRatio
+      : 0;
+
+    /* 10. 健康分（六项加权）
+     *   结构维度 4 项 + 韧性维度 1 项 + 绝对风险 1 项
+     *
+     * 2026-10-24 修订①：消除「风险倒挂」悖论（双评审独立实跑证实）。
+     *   旧版 misScore 直接惩罚「最大风险占比 maxRc」：
+     *     防御型组合（60% 债+现）中，剩余红利股自然占微小总波动的 62%，
+     *     被重罚到 16 分，总分（60）竟低于全押中港股票（65）。
+     *   新版改惩罚「超配差值」，并按组合绝对波动率 σ_p 做严重度衰减
+     *   （σ_p < 15% 时按比例打折，下限 0.25）——同样的超配，在低波动
+     *   组合里无害，在高波动组合里才危险。
+     *   旧版 criScore 用相对衰减率 divDecay：
+     *     平时就高度相关的组合（ρ=0.86 > 危机下限 0.78）衰减率为 0，
+     *     白拿 100 分；真正跨市场分散的反而被重罚（8.5 分）。
+     *   新版改用危机情景的绝对分散度 crisis.divRatio——
+     *     不论怎么衰的，危机来临时还剩多少分散，就记多少分。
+     *
+     * 2026-10-24 修订②：消除「加债券反而扣分」（三方会审新硬伤）。
+     *   现象：100% A股成长 48 分，换成 50% 成长 + 50% 中国债反降到 32 分；
+     *   126 组「单一资产 + 防御资产」对照里 117 组加了防御资产反而降分。
+     *   根因：错配拿「风险占比 − 资金占比」。加债券会稀释股票的资金占比，
+     *   但几乎不分走风险，差距反而变大；单一资产没有差距，拿满分。
+     *   修法：错配改与「独立波动占比」比较——
+     *     standalone_i = wᵢσᵢ / Σⱼwⱼσⱼ（不考虑相关性时这笔仓位
+     *     「本来就该」占的风险份额）。高波动资产本该多占风险，不罚；
+     *     只罚因相关性多吃的部分（隐性超配）。
+     *   改完 126 组对照与 3000 组随机组合「加防御资产反而降分」均为 0 次。 */
+    var concScore = clamp((nEff - 1) / 7 * 100, 0, 100);
+    var maxGap = 0, sumWs = 0;
+    for (i = 0; i < m; i++) sumWs += weights[i] * ASSETS[ids[i]].vol;
+    for (i = 0; i < m; i++) {
+      /* 独立波动占比：不考虑相关性时，这笔仓位「本来就该」占多少风险 */
+      var standalone = sumWs > 0 ? weights[i] * ASSETS[ids[i]].vol / sumWs : weights[i];
+      var gapI = normal.rcPct[i] - standalone;
+      if (gapI > maxGap) maxGap = gapI;
+    }
+    var sevFactor = clamp(normal.sigma / 0.15, 0.25, 1);
+    var misScore = clamp((0.40 - maxGap * sevFactor) / 0.40 * 100, 0, 100);
+    var divScore = clamp(normal.divRatio / 0.45 * 100, 0, 100);
+    var criScore = m <= 1 ? 50 : clamp(crisis.divRatio / 0.45 * 100, 0, 100);
+    var ovScore = m <= 1 ? 50 : clamp(100 - overlaps.length * 30, 0, 100);
+    var absScore = clamp((0.45 - normal.sigma) / (0.45 - 0.08) * 100, 0, 100);
+    var health = Math.round(
+      concScore * 0.18 + misScore * 0.30 + divScore * 0.15 +
+      criScore * 0.12 + ovScore * 0.10 + absScore * 0.15
+    );
+
+    /* 11. 诊断结论 */
+    var findings = buildFindings({
+      m: m, order: order, ids: ids, weights: weights, total: total,
+      normal: normal, crisis: crisis, nEff: nEff, enb: enb, overlaps: overlaps,
+      mismatches: mismatches, divDecay: divDecay, mddWeighted: mddWeighted,
+      mddStress: mddStress, topRegion: topRegion, topRegionW: topRegionW,
+      volRatio: volRatio
+    }, lang);
+
+    /* 12. 组装输出
+     * name 按 lang 输出（tw → nameTw），UI/表格/分享卡直接取用即正确；
+     * nameTw 恒为繁体，保留作规范化参照。 */
+    var positions = [];
+    for (i = 0; i < m; i++) {
+      positions.push({
+        id: order[i],
+        name: lang === 'tw' ? ASSETS[ids[i]].nameTw : ASSETS[ids[i]].name,
+        nameTw: ASSETS[ids[i]].nameTw,
+        kind: ASSETS[ids[i]].kind,
+        amount: merged[order[i]],
+        wPct: weights[i],
+        vol: ASSETS[ids[i]].vol,
+        mdd: ASSETS[ids[i]].mdd,
+        rcPct: normal.rcPct[i],
+        rcPctCrisis: crisis.rcPct[i],
+        gap: normal.rcPct[i] - weights[i],
+        var95: total * weights[i] * 1.645 * (ASSETS[ids[i]].vol / 100)
+      });
+    }
+    positions.sort(function (x, y) { return y.rcPct - x.rcPct; });
+
+    return {
+      lang: lang,
+      total: total,
+      count: m,
+      sigma: normal.sigma * 100,
+      sigmaCrisis: crisis.sigma * 100,
+      volRatio: volRatio,
+      wAvgVol: normal.wAvgVol * 100,
+      var95: total * normal.var95,
+      var95Pct: normal.var95 * 100,
+      diversification: normal.diversification * 100,
+      divRatio: normal.divRatio,
+      divRatioCrisis: crisis.divRatio,
+      divDecay: divDecay,
+      hhi: hhi,
+      nEff: nEff,
+      enb: enb,
+      mddWeighted: mddWeighted * 100,
+      mddStress: mddStress * 100,
+      mddAmount: total * mddStress,
+      health: health,
+      scores: {
+        concentration: Math.round(concScore),
+        mismatch: Math.round(misScore),
+        diversification: Math.round(divScore),
+        crisis: Math.round(criScore),
+        overlap: Math.round(ovScore),
+        absolute: Math.round(absScore)
+      },
+      positions: positions,
+      overlaps: overlaps,
+      mismatches: mismatches.slice(0, 3),
+      findings: findings,
+      topRegion: topRegion,
+      topRegionW: topRegionW
+    };
+  }
+
+  /* ---------- 结论文案（简/繁双语，由引擎产出以保证措辞地道） ---------- */
+  function pct(x, d) { return (x * 100).toFixed(d === undefined ? 1 : d) + '%'; }
+  function money(v, lang) {
+    var a = Math.abs(v);
+    if (a >= 10000) return (a / 10000).toFixed(1) + (lang === 'tw' ? ' 萬' : ' 万');
+    return a.toFixed(0) + (lang === 'tw' ? ' 元' : ' 元');
+  }
+
+  var TEXT = {
+    cn: {
+      pseudoHigh: function (d) {
+        return { level: 'high', tag: '伪分散',
+          title: d.m + ' 笔持仓，风险意义上只有 ' + d.enb.toFixed(1) + ' 笔押注',
+          detail: '有效押注数 ENB = min(N_eff, 1/(wᵀCw))，C 为持仓资产相关系数矩阵，w 为资金权重。持仓高度相关或权重极度倾斜时，笔数再多也只是同一笔交易的不同包装。' };
+      },
+      pseudoMid: function (d) {
+        return { level: 'mid', tag: '偏集中',
+          title: d.m + ' 笔持仓的有效押注数只有 ' + d.enb.toFixed(1),
+          detail: '还有分散空间：把权重往低相关信息源的资产挪一点，有效押注数会明显上升。' };
+      },
+      riskOver: function (d) {
+        return { level: 'high', tag: '风险错配',
+          title: d.name + ' 只占资金 ' + pct(d.w) + '，却吃掉 ' + pct(d.rc) + ' 的波动',
+          detail: '它的高波动被资金占比掩盖了。你以为的小仓位，实际是组合的主要风险来源。' };
+      },
+      riskCushion: function (d) {
+        return { level: 'good', tag: '压舱石',
+          title: d.name + ' 占资金 ' + pct(d.w) + '，只贡献 ' + pct(d.rc) + ' 的风险',
+          detail: '这部分仓位在替整个组合吸收波动，是有效的稳定器。' };
+      },
+      crisisHigh: function (d) {
+        return { level: 'high', tag: '危机失效',
+          title: '平时的分散效果，在危机情景下蒸发 ' + pct(d.decay),
+          detail: '平静时期组合波动 ' + d.s1 + '%，危机情景升至 ' + d.s2 + '%。相关性趋同时，"不同资产"会一起跌。' };
+      },
+      crisisMid: function (d) {
+        return { level: 'mid', tag: '危机衰减',
+          title: '危机情景下分散效果衰减 ' + pct(d.decay),
+          detail: '组合结构有一定韧性，但仍会承受相关性上升的冲击。' };
+      },
+      overlap: function (d) {
+        return { level: 'mid', tag: '隐性重叠',
+          title: d.a + ' 与 ' + d.b + ' 相关性 ' + d.rho.toFixed(2),
+          detail: '两者合计占资金 ' + pct(d.combined) + '，但同涨同跌——在风险上等于一笔 ' +
+            pct(d.combined) + ' 的单押注。' };
+      },
+      drawdown: function (d) {
+        return { level: 'mid', tag: '极端情境',
+          title: '历史级下跌重演，市值可能缩水 ' + pct(-d.mdd) + '（约 ' + d.amt + '）',
+          detail: '按各类资产历史最深回撤加权推算，并计入危机时的波动放大。这是尾部情景，不是预测。' };
+      },
+      geo: function (d) {
+        return { level: 'mid', tag: '地域集中',
+          title: '超过 ' + Math.round(d.w * 100) + '% 的资产集中在同一个市场',
+          detail: '单一市场的政策与流动性冲击会同时打到所有持仓，跨市场对冲是缺失的。' };
+      },
+      noCash: function () {
+        return { level: 'low', tag: '无缓冲',
+          title: '组合里没有现金 / 货币类资产',
+          detail: '缺少零风险资产意味着没有加仓弹药，也没有情绪缓冲垫。' };
+      },
+      healthy: function () {
+        return { level: 'good', tag: '结构健康',
+          title: '没有发现结构性风险集中',
+          detail: '风险来源分散在不同信息源上，危机情景下的衰减也在可控范围。' };
+      }
+    },
+    tw: {
+      pseudoHigh: function (d) {
+        return { level: 'high', tag: '偽分散',
+          title: d.m + ' 筆持倉，風險意義上只有 ' + d.enb.toFixed(1) + ' 筆押注',
+          detail: '有效押注數 ENB = min(N_eff, 1/(wᵀCw))，C 為持倉資產相關係數矩陣，w 為資金權重。持倉高度相關或權重极度傾斜時，筆數再多也只是同一筆交易的不同包裝。' };
+      },
+      pseudoMid: function (d) {
+        return { level: 'mid', tag: '偏集中',
+          title: d.m + ' 筆持倉的有效押注數只有 ' + d.enb.toFixed(1),
+          detail: '還有分散空間：把權重往低相關資訊源的資產挪一點，有效押注數會明顯上升。' };
+      },
+      riskOver: function (d) {
+        return { level: 'high', tag: '風險錯配',
+          title: d.name + ' 只佔資金 ' + pct(d.w) + '，卻吃掉 ' + pct(d.rc) + ' 的波動',
+          detail: '它的高波動被資金佔比掩蓋了。你以為的小部位，實際是組合的主要風險來源。' };
+      },
+      riskCushion: function (d) {
+        return { level: 'good', tag: '壓艙石',
+          title: d.name + ' 佔資金 ' + pct(d.w) + '，只貢獻 ' + pct(d.rc) + ' 的風險',
+          detail: '這部分部位在替整個組合吸收波動，是有效的穩定器。' };
+      },
+      crisisHigh: function (d) {
+        return { level: 'high', tag: '危機失效',
+          title: '平時的分散效果，在危機情境下蒸發 ' + pct(d.decay),
+          detail: '平靜時期組合波動 ' + d.s1 + '%，危機情境升至 ' + d.s2 + '%。相關性趨同時，「不同資產」會一起跌。' };
+      },
+      crisisMid: function (d) {
+        return { level: 'mid', tag: '危機衰減',
+          title: '危機情境下分散效果衰減 ' + pct(d.decay),
+          detail: '組合結構有一定韌性，但仍會承受相關性上升的衝擊。' };
+      },
+      overlap: function (d) {
+        return { level: 'mid', tag: '隱性重疊',
+          title: d.a + ' 與 ' + d.b + ' 相關性 ' + d.rho.toFixed(2),
+          detail: '兩者合計佔資金 ' + pct(d.combined) + '，但同漲同跌——在風險上等於一筆 ' +
+            pct(d.combined) + ' 的單押注。' };
+      },
+      drawdown: function (d) {
+        return { level: 'mid', tag: '極端情境',
+          title: '歷史級下跌重演，市值可能縮水 ' + pct(-d.mdd) + '（約 ' + d.amt + '）',
+          detail: '按各類資產歷史最深回撤加權推算，並計入危機時的波動放大。這是尾部情境，不是預測。' };
+      },
+      geo: function (d) {
+        return { level: 'mid', tag: '地域集中',
+          title: '超過 ' + Math.round(d.w * 100) + '% 的資產集中在同一個市場',
+          detail: '單一市場的政策與流動性衝擊會同時打到所有持倉，跨市場對沖是缺失的。' };
+      },
+      noCash: function () {
+        return { level: 'low', tag: '無緩衝',
+          title: '組合裡沒有現金 / 貨幣類資產',
+          detail: '缺少零風險資產意味著沒有加倉彈藥，也沒有情緒緩衝墊。' };
+      },
+      healthy: function () {
+        return { level: 'good', tag: '結構健康',
+          title: '沒有發現結構性風險集中',
+          detail: '風險來源分散在不同資訊源上，危機情境下的衰減也在可控範圍。' };
+      }
+    }
+  };
+
+  /* ---------- 结论生成 ---------- */
+  function buildFindings(c, lang) {
+    var T = TEXT[lang === 'tw' ? 'tw' : 'cn'];
+    var l = lang === 'tw' ? 'tw' : 'cn';
+    var out = [], d;
+
+    /* ① 押注数（用 ENB：风险意义上的独立押注，而非资金笔数）
+     * 阈值：ENB ≤ 0.8×持仓数且 < 2.5 → 高危伪分散；ENB < 0.75×持仓数 → 提示。
+     * 与权重版 ENB 对齐：保守型、股债 50/50 这类正常组合 ENB ≈ 0.75~0.9×m，
+     * 不应误报；等权 5 只高相关股 ENB = 1.2（m=5）才会触发。 */
+    if (c.m >= 2 && c.enb < 2.5 && c.enb <= 0.8 * c.m) {
+      out.push(T.pseudoHigh({ m: c.m, enb: c.enb }));
+    } else if (c.m >= 3 && c.enb < 0.75 * c.m) {
+      out.push(T.pseudoMid({ m: c.m, enb: c.enb }));
+    }
+
+    /* ② 风险错配（最核心）
+     * 重大性门槛：超配必须在组合绝对波动上留下痕迹才提示——
+     * gap × σ_p > 2 个百分点。否则防御型组合里「红利股占微小波动的 62%」
+     * 也会被标红，而那个组合的总风险其实只有 5%（双评审实跑证实的误报）。 */
+    var worst = c.mismatches[0];
+    var worstExcess = worst ? Math.abs(worst.gap) * c.normal.sigma : 0;
+    if (worst && worst.gap > 0.10 && worstExcess > 0.02) {
+      out.push(T.riskOver({ name: worst.name, w: worst.wPct, rc: worst.rcPct }));
+    } else if (worst && worst.gap < -0.10 && worstExcess > 0.01) {
+      out.push(T.riskCushion({ name: worst.name, w: worst.wPct, rc: worst.rcPct }));
+    }
+
+    /* ③ 危机衰减 */
+    if (c.divDecay > 0.40) {
+      out.push(T.crisisHigh({
+        decay: c.divDecay,
+        s1: (c.normal.sigma * 100).toFixed(1),
+        s2: (c.crisis.sigma * 100).toFixed(1)
+      }));
+    } else if (c.divDecay > 0.25) {
+      out.push(T.crisisMid({ decay: c.divDecay }));
+    }
+
+    /* ④ 隐性重叠 */
+    if (c.overlaps.length) {
+      var o = c.overlaps[0];
+      out.push(T.overlap({ a: o.aName, b: o.bName, rho: o.rho, combined: o.combined }));
+    }
+
+    /* ⑤ 极端回撤 */
+    if (c.mddStress <= -0.30) {
+      out.push(T.drawdown({ mdd: c.mddStress, amt: money(c.total * c.mddStress, l) }));
+    }
+
+    /* ⑥ 地域集中 */
+    if (c.topRegionW >= 0.75 && c.m >= 2 && c.topRegion !== 'GL') {
+      out.push(T.geo({ w: c.topRegionW }));
+    }
+
+    /* ⑦ 无现金缓冲 */
+    if (!c.order.some(function (x) { return x === 'cash'; })) {
+      out.push(T.noCash());
+    }
+
+    /* ⑧ 结构优秀 */
+    if (out.filter(function (x) { return x.level === 'high'; }).length === 0) {
+      out.push(T.healthy());
+    }
+
+    var rank = { high: 0, mid: 1, low: 2, good: 3 };
+    out.sort(function (a, b) { return rank[a.level] - rank[b.level]; });
+    return out;
+  }
+
+  /* ---------- 工具：代码/名称 → 资产类别 ---------- */
+  function resolve(text) {
+    if (!text) return null;
+    var t = String(text).trim();
+    if (!t) return null;
+    if (IDX[t] !== undefined) return t;
+    if (LIB.ALIASES[t]) return LIB.ALIASES[t];
+    var up = t.toUpperCase();
+    for (var k in LIB.ALIASES) {
+      if (k.toUpperCase() === up) return LIB.ALIASES[k];
+    }
+    for (var i = 0; i < ASSETS.length; i++) {
+      if (ASSETS[i].name === t || ASSETS[i].nameTw === t) return ASSETS[i].id;
+    }
+    /* 模糊包含匹配（至少 2 个字，避免单字误伤） */
+    if (t.length >= 2) {
+      for (var j = 0; j < ASSETS.length; j++) {
+        if (t.indexOf(ASSETS[j].name) >= 0 || ASSETS[j].name.indexOf(t) >= 0) return ASSETS[j].id;
+      }
+    }
+    return null;
+  }
+
+  return {
+    analyze: analyze,
+    resolve: resolve,
+    buildCov: buildCov,
+    ASSETS: ASSETS,
+    VERSION: '1.0.0'
+  };
+});
+
+</script>
+<script>
+(function () {
+  'use strict';
+
+  /* ================= 文案 ================= */
+  var I18N = {
+    cn: {
+      brand: '持仓透镜',
+      langBtn: '繁',
+      kicker: 'HoldingsLens · 风险结构透视',
+      heroTitle: '你以为的分散，<br>和实际的分散',
+      heroSub: '输入持仓金额，或直接填基金代码。它会算出每个仓位对组合波动的真实贡献 —— 你会发现，资金占比最小的那个，可能正在决定你的命运。',
+      presets: '快速试算', presetsHint: '一键载入典型组合',
+      pickAssets: '选择持仓类别', pickHint: '点击加入',
+      codeTitle: '按代码 / 名称添加', codeHint: '支持场内 ETF 与场外基金',
+      codePlaceholder: '如 510300 / 008888 / 019141 / 黄金',
+      codeBtn: '添加',
+      codeOk: '已识别：{name} → 加入持仓列表，填一下金额',
+      codeBad: '认不出这个代码或名称。试试常见写法：510300、588000、008888、0050、黄金、BTC',
+      codeDup: '{name} 已在持仓列表里，直接改金额就行',
+      selected: '我的持仓', emptyHint: '还没有持仓。点上面任意类别、按代码添加，或选一个典型组合。',
+      run: '开始风险透视', runSub: '个持仓',
+      back: '← 重新输入',
+      scoreLabel: '健康分', verdictLab: '结构评估',
+      cmpTitle: '资金占比 vs 风险占比', cmpHint: '上面的条是钱，下面的是风险',
+      lgFund: '资金占比', lgRiskHigh: '风险占比高于资金（错配）', lgRiskLow: '低于资金（压舱石）',
+      crisisTitle: '危机情景压力测试', crisisHint: '假设相关性趋同',
+      decayLab: '分散效果蒸发',
+      simTitle: '结构优化模拟', simHint: '只动结构，不改风格',
+      findTitle: '诊断结论', tableTitle: '持仓明细',
+      methodTitle: '计算方法与假设',
+      share: '生成分享卡', close: '关闭', download: '保存图片',
+      disclaimer: '本工具仅做风险结构度量，不预测涨跌、不提供任何买卖建议。参数为资产类别的长期统计量，非实时行情。场外基金代码按「类别级」口径归并到最接近的资产类别（如 008888 芯片联接按成长股处理），与具体基金的真实风险存在偏差。历史回撤不代表未来。投资决策请自行判断并承担风险。',
+      mSigma: '年化波动率', mSigmaX: '组合整体风险水平',
+      mNEff: '有效持仓数', mNEffX: '名义持仓 {n} 笔 · 风险有效押注 {enb}',
+      mMax: '最大风险源', mMaxX: '占资金 {w}',
+      mDecay: '危机衰减', mDecayX: '分散效果在压力下流失',
+      mMDD: '极端回撤估算', mMDDX: '约合 {v}',
+      mVar: '年度 95% 风险值', mVarX: '正常市况下',
+      decNormal: '平时', decCrisis: '危机情景',
+      unitWan: '万', unitYuan: '元',
+      simLead: '把 <b>{from}</b> 的 {pct} 转到 <b>{to}</b>，结构会变成这样：',
+      simSigma: '组合波动率', simMax: '最大单一风险占比', simNEff: '有效持仓数',
+      simNote: '仅为结构模拟，不考虑收益预期与交易成本。降低波动不等于提高收益。',
+      simNone: '当前结构已没有明显的、可机械修复的错配。要进一步改善，需要引入与现有持仓低相关的新资产类别。',
+      verdicts: [
+        { min: 80, t: '结构扎实', s: '风险来源分散在多个独立的信息源上，危机情景下也扛得住。' },
+        { min: 60, t: '基本稳健，但有偏科', s: '整体可控，但存在几处明显的风险集中，值得动手调一调。' },
+        { min: 40, t: '结构偏脆弱', s: '名义上分散，实际风险高度依赖少数几个仓位。' },
+        { min: 0,  t: '高度集中', s: '这更像一笔押注，而不是一个组合。任何单一冲击都可能造成实质损伤。' }
+      ],
+      verdictSingle: { t: '单一资产持仓', s: '只有一笔持仓，谈不上分散——组合波动等于该资产本身的波动，风险结构没有可讨论的空间。' },
+      methodBody: [
+        '<h4>核心公式</h4>',
+        '<ul>',
+        '<li>协方差矩阵 <code>Σᵢⱼ = ρᵢⱼ · σᵢ · σⱼ</code></li>',
+        '<li>组合波动率 <code>σₚ = √(wᵀΣw)</code></li>',
+        '<li>边际风险贡献 <code>MCRᵢ = (Σw)ᵢ / σₚ</code></li>',
+        '<li>风险贡献 <code>RCᵢ = wᵢ · MCRᵢ</code>，且 <code>ΣRCᵢ = σₚ</code></li>',
+        '<li>有效持仓数 <code>N_eff = 1 / Σwᵢ²</code>（赫芬达尔倒数）</li>',
+        '<li>有效押注数 <code>ENB = min(N_eff, 1 / Σwᵢwⱼρᵢⱼ)</code>（相关性修正赫芬达尔倒数）——把权重与相关性同时纳入度量：5 只同涨同跌的股票，N_eff 仍是 5，ENB 却会掉到 1.2 左右；上限截在 N_eff，对冲效果由负风险贡献单独呈现</li>',
+        '</ul>',
+        '<h4>为什么风险贡献会小于 0</h4>',
+        '当某类资产与组合其他部分负相关时，它的 <code>RCᵢ</code> 为负 —— 意思是它在替组合吸收波动。这是数学结果，不是错误。',
+        '<h4>压力测试假设</h4>',
+        '危机情景下，所有风险资产两两相关性被抬升到至少 <b>0.78</b>，黄金上限 0.40，债券落入 0.10–0.35（考虑 2022 年股债双杀）。<b>相关性只允许上升，不允许下降</b> —— 否则压力测试会因「分散改善」而失效。',
+        '<h4>参数口径</h4>',
+        '波动率与最大回撤取资产类别近 20 年长期统计量，不代表任何具体基金。回撤采用历史最深值，并按危机波动放大系数调整（上限 1.35 倍）。',
+        '<h4>局限性</h4>',
+        '① 用类别级参数近似具体持仓，个股/个基的特质性风险未刻画；② 相关系数为长期均值，存在时变；③ 未计入汇率、税费、流动性折价；④ 不构成任何投资建议。'
+      ].join(''),
+      shareCard: { title: '持仓透镜 · 结构体检', score: '健康分', top: '主要风险来源', footer: '不预测涨跌，只度量风险结构' }
+    },
+    tw: {
+      brand: '持倉透鏡',
+      langBtn: '简',
+      kicker: 'HoldingsLens · 風險結構透視',
+      heroTitle: '你以為的分散，<br>和實際的分散',
+      heroSub: '輸入持倉金額，或直接填基金代碼。它會算出每個部位對組合波動的真實貢獻 —— 你會發現，資金佔比最小的那個，可能正在決定你的命運。',
+      presets: '快速試算', presetsHint: '一鍵載入典型組合',
+      pickAssets: '選擇持倉類別', pickHint: '點擊加入',
+      codeTitle: '按代碼 / 名稱新增', codeHint: '支援場內 ETF 與場外基金',
+      codePlaceholder: '如 510300 / 008888 / 019141 / 黃金',
+      codeBtn: '新增',
+      codeOk: '已辨識：{name} → 加入持倉列表，填一下金額',
+      codeBad: '認不出這個代碼或名稱。試試常見寫法：510300、588000、008888、0050、黃金、BTC',
+      codeDup: '{name} 已在持倉列表裡，直接改金額就行',
+      selected: '我的持倉', emptyHint: '還沒有持倉。點上面任意類別、按代碼新增，或選一個典型組合。',
+      run: '開始風險透視', runSub: '個持倉',
+      back: '← 重新輸入',
+      scoreLabel: '健康分', verdictLab: '結構評估',
+      cmpTitle: '資金佔比 vs 風險佔比', cmpHint: '上面的條是錢，下面的是風險',
+      lgFund: '資金佔比', lgRiskHigh: '風險佔比高於資金（錯配）', lgRiskLow: '低於資金（壓艙石）',
+      crisisTitle: '危機情境壓力測試', crisisHint: '假設相關性趨同',
+      decayLab: '分散效果蒸發',
+      simTitle: '結構優化模擬', simHint: '只動結構，不改風格',
+      findTitle: '診斷結論', tableTitle: '持倉明細',
+      methodTitle: '計算方法與假設',
+      share: '生成分享卡', close: '關閉', download: '儲存圖片',
+      disclaimer: '本工具僅做風險結構度量，不預測漲跌、不提供任何買賣建議。參數為資產類別的長期統計量，非即時行情。場外基金代碼按「類別級」口徑歸併到最接近的資產類別（如 008888 芯片聯接按成長股處理），與具體基金的真實風險存在偏差。歷史回撤不代表未來。投資決策請自行判斷並承擔風險。',
+      mSigma: '年化波動率', mSigmaX: '組合整體風險水準',
+      mNEff: '有效持倉數', mNEffX: '名目持倉 {n} 筆 · 風險有效押注 {enb}',
+      mMax: '最大風險源', mMaxX: '佔資金 {w}',
+      mDecay: '危機衰減', mDecayX: '分散效果在壓力下流失',
+      mMDD: '極端回撤估算', mMDDX: '約合 {v}',
+      mVar: '年度 95% 風險值', mVarX: '正常市況下',
+      decNormal: '平時', decCrisis: '危機情境',
+      unitWan: '萬', unitYuan: '元',
+      simLead: '把 <b>{from}</b> 的 {pct} 轉到 <b>{to}</b>，結構會變成這樣：',
+      simSigma: '組合波動率', simMax: '最大單一風險佔比', simNEff: '有效持倉數',
+      simNote: '僅為結構模擬，不考慮收益預期與交易成本。降低波動不等於提高收益。',
+      simNone: '當前結構已沒有明顯的、可機械修復的錯配。要進一步改善，需要引入與現有持倉低相關的新資產類別。',
+      verdicts: [
+        { min: 80, t: '結構紮實', s: '風險來源分散在多個獨立的資訊源上，危機情境下也扛得住。' },
+        { min: 60, t: '基本穩健，但有偏科', s: '整體可控，但存在幾處明顯的風險集中，值得動手調一調。' },
+        { min: 40, t: '結構偏脆弱', s: '名目上分散，實際風險高度依賴少數幾個部位。' },
+        { min: 0,  t: '高度集中', s: '這更像一筆押注，而不是一個組合。任何單一衝擊都可能造成實質損傷。' }
+      ],
+      verdictSingle: { t: '單一資產持倉', s: '只有一筆持倉，談不上分散——組合波動等於該資產本身的波動，風險結構沒有可討論的空間。' },
+      methodBody: [
+        '<h4>核心公式</h4>',
+        '<ul>',
+        '<li>共變異數矩陣 <code>Σᵢⱼ = ρᵢⱼ · σᵢ · σⱼ</code></li>',
+        '<li>組合波動率 <code>σₚ = √(wᵀΣw)</code></li>',
+        '<li>邊際風險貢獻 <code>MCRᵢ = (Σw)ᵢ / σₚ</code></li>',
+        '<li>風險貢獻 <code>RCᵢ = wᵢ · MCRᵢ</code>，且 <code>ΣRCᵢ = σₚ</code></li>',
+        '<li>有效持倉數 <code>N_eff = 1 / Σwᵢ²</code>（赫芬達爾倒數）</li>',
+        '<li>有效押注數 <code>ENB = min(N_eff, 1 / Σwᵢwⱼρᵢⱼ)</code>（相關性修正赫芬達爾倒數）——把權重與相關性同時納入度量：5 隻同漲同跌的股票，N_eff 仍是 5，ENB 卻會掉到 1.2 左右；上限截在 N_eff，對沖效果由負風險貢獻單獨呈現</li>',
+        '</ul>',
+        '<h4>為什麼風險貢獻會小於 0</h4>',
+        '當某類資產與組合其他部分負相關時，它的 <code>RCᵢ</code> 為負 —— 意思是它在替組合吸收波動。這是數學結果，不是錯誤。',
+        '<h4>壓力測試假設</h4>',
+        '危機情境下，所有風險資產兩兩相關性被抬升到至少 <b>0.78</b>，黃金上限 0.40，債券落入 0.10–0.35（考慮 2022 年股債雙殺）。<b>相關性只允許上升，不允許下降</b> —— 否則壓力測試會因「分散改善」而失效。',
+        '<h4>參數口徑</h4>',
+        '波動率與最大回撤取資產類別近 20 年長期統計量，不代表任何具體基金。回撤採用歷史最深值，並按危機波動放大係數調整（上限 1.35 倍）。',
+        '<h4>局限性</h4>',
+        '① 用類別級參數近似具體持倉，個股/個基的特質性風險未刻畫；② 相關係數為長期均值，存在時變；③ 未計入匯率、稅費、流動性折價；④ 不構成任何投資建議。'
+      ].join(''),
+      shareCard: { title: '持倉透鏡 · 結構體檢', score: '健康分', top: '主要風險來源', footer: '不預測漲跌，只度量風險結構' }
+    }
+  };
+
+  var PRESETS = [
+    { id: 'conservative', cn: '保守型', tw: '保守型',
+      items: [['bond_cn', 40], ['cn_div', 25], ['gold', 15], ['cash', 20]] },
+    { id: 'balanced', cn: '均衡型', tw: '均衡型',
+      items: [['cn_broad', 25], ['us', 25], ['bond_cn', 25], ['gold', 15], ['hk', 10]] },
+    { id: 'aggressive', cn: '进取型', tw: '進取型',
+      items: [['cn_growth', 30], ['us_tech', 30], ['tw', 20], ['hk', 10], ['gold', 10]] },
+    { id: 'ai', cn: 'AI 算力链', tw: 'AI 算力鏈',
+      items: [['us_tech', 35], ['cn_growth', 30], ['tw', 25], ['bond_cn', 10]] }
+  ];
+
+  var BUDGET = 500000;
+
+  /* ================= 状态 ================= */
+  var lang = localStorage.getItem('xray.lang') || 'cn';
+  var holdings = [];          /* [{id, amount}] */
+  var lastReport = null;
+
+  var $ = function (s) { return document.querySelector(s); };
+  var T = function (k) { return I18N[lang][k]; };
+
+  function assetName(a) { return lang === 'tw' ? a.nameTw : a.name; }
+  function money(v) {
+    var a = Math.abs(v);
+    if (a >= 10000) return (v / 10000).toFixed(1) + ' ' + T('unitWan');
+    return v.toFixed(0) + ' ' + T('unitYuan');
+  }
+  function pct(v, d) { return (v * 100).toFixed(d === undefined ? 1 : d) + '%'; }
+  function moneyShort(v) {
+    var a = Math.abs(v);
+    if (a >= 10000) return (v / 10000).toFixed(1) + T('unitWan');
+    return v.toFixed(0);
+  }
+
+  /* ================= 语言应用 ================= */
+  function applyLang() {
+    document.documentElement.lang = lang === 'tw' ? 'zh-Hant' : 'zh-CN';
+    document.querySelectorAll('[data-t]').forEach(function (el) {
+      var k = el.getAttribute('data-t');
+      if (I18N[lang][k] !== undefined) el.innerHTML = I18N[lang][k];
+    });
+    $('#heroTitle').innerHTML = T('heroTitle');
+    $('#langBtn').textContent = T('langBtn');
+    $('#methodBody').innerHTML = T('methodBody');
+    var ci = $('#codeInput');
+    if (ci) ci.placeholder = T('codePlaceholder');
+  }
+
+  /* ================= 渲染：资产网格 ================= */
+  function renderAssets() {
+    var g = $('#assetGrid');
+    g.innerHTML = '';
+    XRayEngine.ASSETS.forEach(function (a) {
+      var b = document.createElement('button');
+      b.className = 'asset';
+      b.dataset.id = a.id;
+      b.innerHTML = '<span class="n">' + assetName(a) + '</span>' +
+        '<span class="v">' + (lang === 'tw' ? '波動' : '波动') + ' ' + a.vol + '% · ' +
+        (lang === 'tw' ? '最深' : '最深') + ' ' + a.mdd + '%</span>';
+      b.onclick = function () { toggleAsset(a.id); };
+      g.appendChild(b);
+    });
+    syncAssetSel();
+  }
+
+  function toggleAsset(id) {
+    var i = indexOf(id);
+    if (i >= 0) {
+      holdings.splice(i, 1);
+    } else {
+      /* 新增项只决定自己的初始金额，不重置用户已改过的其他项 */
+      var base = Math.round(BUDGET / Math.max(3, holdings.length + 1) / 1000) * 1000;
+      holdings.push({ id: id, amount: base });
+    }
+    renderHoldings();
+    syncAssetSel();
+  }
+
+  function indexOf(id) {
+    for (var i = 0; i < holdings.length; i++) if (holdings[i].id === id) return i;
+    return -1;
+  }
+
+  function syncAssetSel() {
+    document.querySelectorAll('.asset').forEach(function (el) {
+      el.classList.toggle('sel', indexOf(el.dataset.id) >= 0);
+    });
+  }
+
+  /* ================= 按代码 / 名称添加 ================= */
+  function codeMsg(text, cls) {
+    var el = $('#codeMsg');
+    if (!el) return;
+    el.textContent = text || '';
+    el.className = 'code-msg' + (cls ? ' ' + cls : '');
+  }
+
+  function addByCode() {
+    var inp = $('#codeInput');
+    var raw = (inp.value || '').trim();
+    if (!raw) { codeMsg(T('codeBad'), 'bad'); return; }
+    var id = XRayEngine.resolve(raw);
+    if (!id) { codeMsg(T('codeBad'), 'bad'); return; }
+    var a = XRayEngine.ASSETS[XRayAssets.IDX[id]];
+    var nm = assetName(a);
+    if (indexOf(id) >= 0) {
+      codeMsg(T('codeDup').replace('{name}', nm), 'ok');
+      inp.value = '';
+      return;
+    }
+    /* 与点击格子一致：新项只决定自己的初始金额，不动其他项 */
+    var base = Math.round(BUDGET / Math.max(3, holdings.length + 1) / 1000) * 1000;
+    holdings.push({ id: id, amount: base });
+    renderHoldings();
+    syncAssetSel();
+    codeMsg(T('codeOk').replace('{name}', nm), 'ok');
+    inp.value = '';
+    inp.focus();
+  }
+
+  /* ================= 渲染：持仓列表 ================= */
+  function renderHoldings() {
+    var box = $('#holdList');
+    box.innerHTML = '';
+    var total = 0;
+
+    holdings.forEach(function (h, i) {
+      total += h.amount;
+      var a = XRayEngine.ASSETS[XRayAssets.IDX[h.id]];
+      var row = document.createElement('div');
+      row.className = 'hold';
+      row.innerHTML =
+        '<span class="nm">' + assetName(a) + '</span>' +
+        '<input class="amt" type="number" min="0" step="1000" value="' + h.amount + '">' +
+        '<button class="del">×</button>';
+      var inp = row.querySelector('.amt');
+      inp.oninput = function () {
+        var v = Number(inp.value);
+        holdings[i].amount = isFinite(v) && v >= 0 ? v : 0;
+        updateTotal();
+      };
+      row.querySelector('.del').onclick = function () {
+        holdings.splice(i, 1);
+        renderHoldings();
+        syncAssetSel();
+      };
+      box.appendChild(row);
+    });
+
+    $('#emptyHint').style.display = holdings.length ? 'none' : 'block';
+    updateTotal();
+  }
+
+  function updateTotal() {
+    var total = holdings.reduce(function (s, h) { return s + (h.amount || 0); }, 0);
+    $('#totalLabel').textContent = total > 0 ? money(total) : '—';
+    var btn = $('#btnRun');
+    if (btn) {
+      btn.disabled = total <= 0;
+      btn.innerHTML = T('run') + ' <span class="sub">' + holdings.length + ' ' + T('runSub') + '</span>';
+    }
+  }
+
+  /* ================= 预设 ================= */
+  function renderPresets() {
+    var row = $('#presetRow');
+    row.innerHTML = '';
+    PRESETS.forEach(function (p) {
+      var b = document.createElement('button');
+      b.className = 'chip' + (p.id === 'ai' ? ' hot' : '');
+      b.textContent = lang === 'tw' ? p.tw : p.cn;
+      b.onclick = function () {
+        holdings = p.items.map(function (kv) {
+          return { id: kv[0], amount: Math.round(BUDGET * kv[1] / 100) };
+        });
+        renderHoldings();
+        syncAssetSel();
+      };
+      row.appendChild(b);
+    });
+  }
+
+  /* ================= 报告渲染 ================= */
+  function buildReport() {
+    var clean = holdings.filter(function (h) { return h.amount > 0; });
+    if (!clean.length) return;
+    var r = XRayEngine.analyze(clean, { lang: lang });
+    if (!r) return;
+    lastReport = r;
+    renderReport(r);
+    $('#s-input').classList.remove('on');
+    $('#s-report').classList.add('on');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function scoreColor(s) {
+    if (s >= 80) return '#23D18B';
+    if (s >= 60) return '#0099FF';
+    if (s >= 40) return '#FFA53D';
+    return '#FF4D6A';
+  }
+
+  function renderReport(r) {
+    /* --- 分数环 --- */
+    var C = 2 * Math.PI * 51;
+    var arc = $('#ringArc');
+    arc.setAttribute('stroke-dasharray', C.toFixed(1));
+    arc.setAttribute('stroke-dashoffset', C.toFixed(1));
+    arc.setAttribute('stroke', scoreColor(r.health));
+    setTimeout(function () {
+      arc.setAttribute('stroke-dashoffset', (C * (1 - r.health / 100)).toFixed(1));
+    }, 60);
+
+    var n = 0;
+    var el = $('#scoreNum');
+    var timer = setInterval(function () {
+      n += Math.max(1, Math.round(r.health / 18));
+      if (n >= r.health) { n = r.health; clearInterval(timer); }
+      el.textContent = n;
+      el.style.color = scoreColor(r.health);
+    }, 26);
+
+    /* --- 定性 --- */
+    var v = (r.count <= 1 && T('verdictSingle')) ? T('verdictSingle')
+      : T('verdicts').filter(function (x) { return r.health >= x.min; })[0];
+    $('#verdictTitle').textContent = v.t;
+    $('#verdictSub').textContent = v.s;
+
+    /* --- 指标 --- */
+    var topRc = r.positions[0];
+    var topRcPct = topRc ? Math.max(0, topRc.rcPct) : 0;
+    var metrics = [
+      { k: T('mSigma'), v: r.sigma.toFixed(1) + '%', x: T('mSigmaX'),
+        c: r.sigma > 25 ? 'c-danger' : (r.sigma > 15 ? 'c-warn' : 'c-good') },
+      { k: T('mNEff'), v: r.nEff.toFixed(1),
+        x: T('mNEffX').replace('{n}', r.count).replace('{enb}', r.enb.toFixed(1)),
+        c: r.nEff < 2.5 ? 'c-danger' : (r.nEff < 4 ? 'c-warn' : 'c-good') },
+      { k: T('mMax'), v: pct(topRcPct, 0), x: topRc.name + ' · ' + pct(topRc.wPct, 0),
+        c: topRcPct > 0.5 ? 'c-danger' : (topRcPct > 0.35 ? 'c-warn' : 'c-good') },
+      { k: T('mDecay'), v: pct(r.divDecay, 0), x: T('mDecayX'),
+        c: r.divDecay > 0.4 ? 'c-danger' : (r.divDecay > 0.25 ? 'c-warn' : 'c-good') },
+      { k: T('mMDD'), v: r.mddStress.toFixed(0) + '%', x: T('mMDDX').replace('{v}', money(r.mddAmount)),
+        c: r.mddStress < -40 ? 'c-danger' : (r.mddStress < -25 ? 'c-warn' : 'c-good') },
+      { k: T('mVar'), v: r.var95Pct.toFixed(1) + '%', x: T('mVarX') + ' · ' + money(r.var95),
+        c: r.var95Pct > 30 ? 'c-danger' : (r.var95Pct > 18 ? 'c-warn' : 'c-good') }
+    ];
+    $('#metrics').innerHTML = metrics.map(function (m) {
+      return '<div class="metric"><div class="k">' + m.k + '</div>' +
+        '<div class="v ' + m.c + '">' + m.v + '</div>' +
+        '<div class="x">' + m.x + '</div></div>';
+    }).join('');
+
+    /* --- 对比图 --- */
+    var maxVal = Math.max.apply(null, r.positions.map(function (p) {
+      return Math.max(p.wPct, p.rcPct, 0.01);
+    }));
+    maxVal = Math.max(maxVal, 0.2) * 1.08;
+
+    $('#cmpChart').innerHTML = r.positions.map(function (p) {
+      var gap = p.rcPct - p.wPct;
+      var cls = gap > 0.05 ? 'over' : (gap < -0.05 ? 'under' : '');
+      var gapTxt = (gap >= 0 ? '+' : '') + (gap * 100).toFixed(1);
+      var gapColor = gap > 0.05 ? 'var(--danger)' : (gap < -0.05 ? 'var(--cyan)' : 'var(--dim-2)');
+      /* 负风险贡献表示该资产在替组合吸收波动，需明确标注，否则用户会以为算错了 */
+      var rcLabel = pct(p.rcPct) + (p.rcPct < -0.005 ? (lang === 'tw' ? ' · 對沖' : ' · 对冲') : '');
+      return '<div class="cmp-row">' +
+        '<div class="cmp-top">' +
+          '<span class="cmp-name">' + p.name + '</span>' +
+          '<span class="cmp-gap" style="color:' + gapColor + '">' + gapTxt + ' pp</span>' +
+        '</div>' +
+        '<div class="bar w"><i style="width:' + (p.wPct / maxVal * 100).toFixed(2) + '%"></i></div>' +
+        '<div class="bar r ' + cls + '"><i style="width:' + (Math.max(0, p.rcPct) / maxVal * 100).toFixed(2) + '%"></i></div>' +
+        '<div class="bar-labels">' +
+          '<span>' + T('lgFund') + ' ' + pct(p.wPct) + '</span>' +
+          '<span>' + (lang === 'tw' ? '風險佔比' : '风险占比') + ' ' + rcLabel + '</span>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    /* --- 危机对比 --- */
+    var hMax = Math.max(r.sigma, r.sigmaCrisis, 1) * 1.15;
+    $('#crisisBars').innerHTML =
+      '<div class="cbar">' +
+        '<div class="cv">' + r.sigma.toFixed(1) + '%</div>' +
+        '<div class="stack normal" style="height:0" data-h="' + (r.sigma / hMax * 118) + '"></div>' +
+        '<div class="cl">' + T('decNormal') + '</div>' +
+      '</div>' +
+      '<div class="cbar">' +
+        '<div class="cv" style="color:var(--danger)">' + r.sigmaCrisis.toFixed(1) + '%</div>' +
+        '<div class="stack crisis" style="height:0" data-h="' + (r.sigmaCrisis / hMax * 118) + '"></div>' +
+        '<div class="cl">' + T('decCrisis') + '</div>' +
+      '</div>';
+    setTimeout(function () {
+      document.querySelectorAll('.stack').forEach(function (s) {
+        s.style.height = s.dataset.h + 'px';
+      });
+    }, 80);
+
+    $('#decayNum').textContent = pct(r.divDecay, 0);
+    $('#decayNote').textContent = lang === 'tw'
+      ? '平時的分散效果有 ' + (r.divRatio * 100).toFixed(0) + '%，危機情境只剩 ' +
+        (r.divRatioCrisis * 100).toFixed(0) + '%。相關性趨同的那一刻，「不同資產」會一起跌。'
+      : '平时的分散效果有 ' + (r.divRatio * 100).toFixed(0) + '%，危机情景只剩 ' +
+        (r.divRatioCrisis * 100).toFixed(0) + '%。相关性趋同的那一刻，「不同资产」会一起跌。';
+
+    /* --- 优化模拟 --- */
+    renderSim(r);
+
+    /* --- 结论 --- */
+    $('#findings').innerHTML = r.findings.map(function (f) {
+      return '<div class="finding ' + f.level + '">' +
+        '<span class="tag">' + f.tag + '</span>' +
+        '<div class="t">' + f.title + '</div>' +
+        '<div class="d">' + f.detail + '</div>' +
+      '</div>';
+    }).join('');
+
+    /* --- 明细表 --- */
+    var head = lang === 'tw'
+      ? ['資產', '金額', '資金佔比', '風險佔比', '偏離', '波動率', '最大回撤']
+      : ['资产', '金额', '资金占比', '风险占比', '偏离', '波动率', '最大回撤'];
+    var rows = r.positions.map(function (p) {
+      var gap = p.rcPct - p.wPct;
+      var gapCls = gap > 0.05 ? 'over' : (gap < -0.05 ? 'neg' : '');
+      return '<tr>' +
+        '<td>' + p.name + '</td>' +
+        '<td>' + moneyShort(p.amount) + '</td>' +
+        '<td>' + pct(p.wPct) + '</td>' +
+        '<td class="' + (p.rcPct < 0 ? 'neg' : '') + '">' + pct(p.rcPct) + '</td>' +
+        '<td class="' + gapCls + '">' + (gap >= 0 ? '+' : '') + (gap * 100).toFixed(1) + '</td>' +
+        '<td>' + p.vol + '%</td>' +
+        '<td>' + p.mdd + '%</td>' +
+      '</tr>';
+    }).join('');
+    $('#tbl').innerHTML = '<thead><tr>' + head.map(function (h) {
+      return '<th>' + h + '</th>';
+    }).join('') + '</tr></thead><tbody>' + rows +
+      '<tr style="border-top:1px solid var(--line-2)"><td><b>' +
+      (lang === 'tw' ? '合計' : '合计') + '</b></td><td>' + moneyShort(r.total) +
+      '</td><td>100.0%</td><td>100.0%</td><td>—</td><td>' + r.sigma.toFixed(1) +
+      '%</td><td>' + r.mddStress.toFixed(0) + '%</td></tr></tbody>';
+  }
+
+  /* ================= 优化模拟 ================= */
+  function renderSim(r) {
+    if (r.positions.length < 2) {
+      $('#simBody').innerHTML = '<div class="sim-card"><div class="lead">' + T('simNone') + '</div></div>';
+      return;
+    }
+    /* 与 findings 的「风险错配」判定完全同口径：错配 = 风险占比 − 资金占比，
+     * 且必须对组合绝对波动有实质影响才给建议。单位为：gap（小数）× σp（百分数）> 2，
+     * 即错配超过 2 个百分点的组合波动。低波动组合（保守型 σ≈5.2%）相对占比差虽大，
+     * 绝对影响只有约 1.96pp 达不到门槛 —— 这正是覆盤中修正的误报场景：
+     * 旧版会建议保守组合砍红利 20%，而该组合的资金/风险结构并无实质错配。 */
+    var worst = null;
+    r.positions.forEach(function (p) {
+      var gap = p.rcPct - p.wPct;
+      if (!worst || gap > worst.gap) worst = { p: p, gap: gap };
+    });
+    var worstExcess = worst ? worst.gap * r.sigma : 0;
+    if (!worst || worst.gap <= 0.10 || worstExcess <= 2) {
+      $('#simBody').innerHTML = '<div class="sim-card"><div class="lead">' + T('simNone') + '</div></div>';
+      return;
+    }
+    /* from = 错配最严重的持仓；to = 风险贡献最低的其它持仓 */
+    var from = worst.p;
+    var to = null;
+    r.positions.forEach(function (p) {
+      if (p.id === from.id) return;
+      if (!to || p.rcPct < to.rcPct) to = p;
+    });
+    if (!to) {
+      $('#simBody').innerHTML = '<div class="sim-card"><div class="lead">' + T('simNone') + '</div></div>';
+      return;
+    }
+
+    var movePct = 0.20;
+    var moveAmt = from.amount * movePct;
+    var trial = r.positions.map(function (p) {
+      var amt = p.amount;
+      if (p.id === from.id) amt -= moveAmt;
+      if (p.id === to.id) amt += moveAmt;
+      return { id: p.id, amount: Math.max(1, amt) };
+    });
+    var t = XRayEngine.analyze(trial, { lang: lang });
+    if (!t) return;
+
+    var tMax = Math.max.apply(null, t.positions.map(function (p) { return p.rcPct; }));
+
+    $('#simBody').innerHTML =
+      '<div class="sim-card">' +
+        '<div class="lead">' + T('simLead')
+          .replace('{from}', from.name)
+          .replace('{pct}', Math.round(movePct * 100) + '%')
+          .replace('{to}', to.name) + '</div>' +
+        '<div class="sim-rows">' +
+          '<span class="k"></span><span class="a">' + (lang === 'tw' ? '現在' : '现在') + '</span>' +
+            '<span class="b">' + (lang === 'tw' ? '調整後' : '调整后') + '</span>' +
+          '<span class="k">' + T('simSigma') + '</span>' +
+            '<span class="a">' + r.sigma.toFixed(1) + '%</span>' +
+            '<span class="b">' + t.sigma.toFixed(1) + '%</span>' +
+          '<span class="k">' + T('simMax') + '</span>' +
+            '<span class="a">' + pct(Math.max.apply(null, r.positions.map(function (p) { return p.rcPct; })), 0) + '</span>' +
+            '<span class="b">' + pct(tMax, 0) + '</span>' +
+          '<span class="k">' + T('simNEff') + '</span>' +
+            '<span class="a">' + r.nEff.toFixed(1) + '</span>' +
+            '<span class="b">' + t.nEff.toFixed(1) + '</span>' +
+        '</div>' +
+        '<div style="margin-top:13px;font-size:11px;color:var(--dim-2);line-height:1.6">' + T('simNote') + '</div>' +
+      '</div>';
+  }
+
+  /* ================= 分享卡 ================= */
+  function drawShareCard() {
+    var r = lastReport;
+    if (!r) return;
+    var c = $('#shareCanvas'), g = c.getContext('2d');
+    var W = c.width, H = c.height;
+
+    /* 背景 */
+    var bg = g.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0, '#0A1B30');
+    bg.addColorStop(.55, '#071322');
+    bg.addColorStop(1, '#0C2038');
+    g.fillStyle = bg;
+    g.fillRect(0, 0, W, H);
+
+    /* 网格 */
+    g.strokeStyle = 'rgba(122,168,222,.06)';
+    g.lineWidth = 1;
+    for (var x = 0; x < W; x += 60) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.stroke(); }
+    for (var y = 0; y < H; y += 60) { g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke(); }
+
+    /* 顶部品牌 */
+    g.fillStyle = '#00E2C6';
+    g.beginPath(); g.arc(78, 88, 9, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#E7F0FB';
+    g.font = '600 34px system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
+    g.textBaseline = 'middle';
+    g.fillText(T('brand'), 104, 90);
+
+    g.fillStyle = '#7C93B2';
+    g.font = '400 22px system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
+    g.fillText(T('shareCard').title, 78, 148);
+
+    /* 分数环 */
+    var cx = W / 2, cy = 400, rad = 132;
+    g.strokeStyle = 'rgba(122,168,222,.14)';
+    g.lineWidth = 22;
+    g.beginPath(); g.arc(cx, cy, rad, 0, Math.PI * 2); g.stroke();
+
+    g.strokeStyle = scoreColor(r.health);
+    g.lineWidth = 22;
+    g.lineCap = 'round';
+    g.beginPath();
+    g.arc(cx, cy, rad, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (r.health / 100));
+    g.stroke();
+
+    g.fillStyle = scoreColor(r.health);
+    g.font = '700 96px ui-monospace,Menlo,Consolas,monospace';
+    g.textAlign = 'center';
+    g.fillText(String(r.health), cx, cy - 8);
+    g.fillStyle = '#7C93B2';
+    g.font = '400 24px system-ui,-apple-system,"PingFang SC",sans-serif';
+    g.fillText(T('shareCard').score, cx, cy + 62);
+
+    /* 定性 */
+    var v = (r.count <= 1 && T('verdictSingle')) ? T('verdictSingle')
+      : T('verdicts').filter(function (q) { return r.health >= q.min; })[0];
+    g.fillStyle = '#E7F0FB';
+    g.font = '600 44px system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
+    g.fillText(v.t, cx, 610);
+
+    /* 分隔线 */
+    g.strokeStyle = 'rgba(122,168,222,.16)';
+    g.lineWidth = 1;
+    g.beginPath(); g.moveTo(78, 672); g.lineTo(W - 78, 672); g.stroke();
+
+    /* 四个数字 */
+    var stats = [
+      [r.sigma.toFixed(1) + '%', T('mSigma')],
+      [r.nEff.toFixed(1), T('mNEff')],
+      [pct(r.divDecay, 0), T('mDecay')],
+      [r.mddStress.toFixed(0) + '%', T('mMDD')]
+    ];
+    var colW = (W - 156) / 2;
+    stats.forEach(function (s, i) {
+      var px = 78 + (i % 2) * colW;
+      var py = 730 + Math.floor(i / 2) * 118;
+      g.textAlign = 'left';
+      g.fillStyle = '#E7F0FB';
+      g.font = '700 46px ui-monospace,Menlo,Consolas,monospace';
+      g.fillText(s[0], px, py);
+      g.fillStyle = '#7C93B2';
+      g.font = '400 21px system-ui,-apple-system,"PingFang SC",sans-serif';
+      g.fillText(s[1], px, py + 40);
+    });
+
+    /* 主要风险来源 */
+    g.textAlign = 'left';
+    g.fillStyle = '#7C93B2';
+    g.font = '400 21px system-ui,-apple-system,"PingFang SC",sans-serif';
+    g.fillText(T('shareCard').top, 78, 1000);
+
+    var tops = r.positions.slice(0, 3);
+    var maxPct = Math.max.apply(null, tops.map(function (p) { return Math.max(p.rcPct, 0.01); }));
+    tops.forEach(function (p, i) {
+      var ty = 1050 + i * 74;
+      g.textAlign = 'left';
+      g.fillStyle = '#C9DCF0';
+      g.font = '500 26px system-ui,-apple-system,"PingFang SC",sans-serif';
+      g.fillText(p.name, 78, ty);
+
+      /* 条 */
+      var bx = 430, bw = W - 78 - bx - 110;
+      g.fillStyle = 'rgba(122,168,222,.12)';
+      g.fillRect(bx, ty - 9, bw, 12);
+      var grd = g.createLinearGradient(bx, 0, bx + bw, 0);
+      grd.addColorStop(0, '#0099FF');
+      grd.addColorStop(1, '#00E2C6');
+      g.fillStyle = grd;
+      g.fillRect(bx, ty - 9, bw * Math.max(0, p.rcPct) / maxPct, 12);
+
+      g.textAlign = 'right';
+      g.fillStyle = '#E7F0FB';
+      g.font = '600 26px ui-monospace,Menlo,Consolas,monospace';
+      g.fillText(pct(p.rcPct, 0), W - 78, ty);
+    });
+
+    /* 页脚 */
+    var d = new Date();
+    var dstr = d.getFullYear() + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + String(d.getDate()).padStart(2, '0');
+    g.textAlign = 'center';
+    g.fillStyle = '#5A6E8A';
+    g.font = '400 21px system-ui,-apple-system,"PingFang SC",sans-serif';
+    g.fillText(T('shareCard').footer, W / 2, H - 80);
+    g.fillStyle = 'rgba(122,168,222,.45)';
+    g.font = '400 17px system-ui,-apple-system,"PingFang SC",sans-serif';
+    g.fillText(T('brand') + ' · ' + dstr, W / 2, H - 44);
+  }
+
+  /* ================= 事件绑定 ================= */
+  function bind() {
+    $('#langBtn').onclick = function () {
+      lang = lang === 'cn' ? 'tw' : 'cn';
+      localStorage.setItem('xray.lang', lang);
+      applyLang();
+      renderPresets();
+      renderAssets();
+      renderHoldings();
+      if (lastReport) {
+        var clean = holdings.filter(function (h) { return h.amount > 0; });
+        var r = XRayEngine.analyze(clean, { lang: lang });
+        if (r) { lastReport = r; renderReport(r); }
+      }
+    };
+
+    $('#btnRun').onclick = buildReport;
+    $('#btnAddCode').onclick = addByCode;
+    $('#codeInput').onkeydown = function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); addByCode(); }
+    };
+    $('#btnBack').onclick = function () {
+      $('#s-report').classList.remove('on');
+      $('#s-input').classList.add('on');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    $('#btnShare').onclick = function () {
+      drawShareCard();
+      $('#overlay').classList.add('on');
+    };
+    $('#btnCloseShare').onclick = function () { $('#overlay').classList.remove('on'); };
+    $('#overlay').onclick = function (e) {
+      if (e.target === $('#overlay')) $('#overlay').classList.remove('on');
+    };
+    $('#btnDownload').onclick = function () {
+      var a = document.createElement('a');
+      a.download = 'holdings-lens-report.png';
+      a.href = $('#shareCanvas').toDataURL('image/png');
+      a.click();
+    };
+
+    window.addEventListener('resize', function () {
+      if (lastReport) renderReport(lastReport);
+    });
+  }
+
+  /* ================= 启动 ================= */
+  function init() {
+    applyLang();
+    renderPresets();
+    /* 首屏先放一个示例组合（与作品说明/简报中的 demo 案例完全一致，便于复现），
+     * 用户可直接改、按代码增删，或清空重来 */
+    holdings = [
+      { id: 'cn_growth', amount: 180000 },
+      { id: 'us_tech', amount: 150000 },
+      { id: 'gold', amount: 60000 },
+      { id: 'bond_cn', amount: 40000 }
+    ];
+    renderAssets();
+    renderHoldings();
+    bind();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>

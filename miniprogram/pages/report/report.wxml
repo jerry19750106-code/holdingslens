@@ -1,0 +1,174 @@
+<view class="page report">
+
+  <!-- 分数 -->
+  <view class="head">
+    <view class="ring">
+      <view
+        class="ring-progress"
+        style="background: conic-gradient(from -90deg, {{scoreColor}} 0deg, {{scoreColor}} {{ringDeg}}deg, rgba(122,168,222,0.14) {{ringDeg}}deg, rgba(122,168,222,0.14) 360deg)"
+      ></view>
+      <view class="ring-inner">
+        <text class="score" style="color: {{scoreColor}}">{{score}}</text>
+        <text class="score-lab">{{T.scoreLabel}}</text>
+      </view>
+    </view>
+    <view class="verdict">
+      <view class="lab">{{T.verdictLab}}</view>
+      <view class="ttl">{{verdictT}}</view>
+      <view class="sub">{{verdictS}}</view>
+    </view>
+  </view>
+
+  <!-- 指标 -->
+  <view class="metrics">
+    <view class="metric" wx:for="{{metrics}}" wx:key="k">
+      <text class="k">{{item.k}}</text>
+      <text class="v {{item.c}}">{{item.v}}</text>
+      <text class="x">{{item.x}}</text>
+    </view>
+  </view>
+
+  <!-- 资金 vs 风险 -->
+  <view class="block">
+    <view class="block-h">
+      <text>{{T.cmpTitle}}</text>
+      <text class="em">{{T.cmpHint}}</text>
+    </view>
+    <view class="cmp">
+      <view class="cmp-row" wx:for="{{rows}}" wx:key="id">
+        <view class="cmp-top">
+          <text class="cmp-name">{{item.name}}</text>
+          <text class="cmp-gap" style="color: {{item.gapColor}}">{{item.gapText}} pp</text>
+        </view>
+        <view class="bar w"><view class="fill" style="width: {{item.wWidth}}%"></view></view>
+        <view class="bar r {{item.cls}}"><view class="fill" style="width: {{item.rWidth}}%"></view></view>
+        <view class="bar-labels">
+          <text>{{T.lgFund}} {{item.wText}}</text>
+          <text>{{T.lgRisk}} {{item.rcText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 危机 -->
+  <view class="block">
+    <view class="block-h">
+      <text>{{T.crisisTitle}}</text>
+      <text class="em">{{T.crisisHint}}</text>
+    </view>
+    <view class="crisis">
+      <view class="cbar">
+        <text class="cv">{{crisis.s1}}%</text>
+        <view class="stack normal" style="height: {{crisis.h1}}rpx"></view>
+        <text class="cl">{{T.now}}</text>
+      </view>
+      <view class="cbar">
+        <text class="cv c-danger">{{crisis.s2}}%</text>
+        <view class="stack crisis" style="height: {{crisis.h2}}rpx"></view>
+        <text class="cl">{{T.crisisHint}}</text>
+      </view>
+    </view>
+    <view class="decay">
+      <text class="dnum">{{decayText}}</text>
+      <text class="dlab">{{T.decayLab}}</text>
+      <text class="dnote">{{decayNote}}</text>
+    </view>
+  </view>
+
+  <!-- 模拟 -->
+  <view class="block" wx:if="{{sim}}">
+    <view class="block-h">
+      <text>{{T.simTitle}}</text>
+      <text class="em">{{T.simHint}}</text>
+    </view>
+    <view class="sim-card">
+      <view class="lead">{{simLead}}</view>
+      <view class="sim-rows">
+        <view class="sr">
+          <text class="sk">{{T.simSigma}}</text>
+          <text class="sa">{{sim.sigma1}}%</text>
+          <text class="sb">{{sim.sigma2}}%</text>
+        </view>
+        <view class="sr">
+          <text class="sk">{{T.simMax}}</text>
+          <text class="sa">{{sim.max1}}%</text>
+          <text class="sb">{{sim.max2}}%</text>
+        </view>
+        <view class="sr">
+          <text class="sk">{{T.simNEff}}</text>
+          <text class="sa">{{sim.neff1}}</text>
+          <text class="sb">{{sim.neff2}}</text>
+        </view>
+      </view>
+      <view class="sim-note">{{T.simNote}}</view>
+    </view>
+  </view>
+
+  <!-- 结论 -->
+  <view class="block">
+    <view class="block-h"><text>{{T.findTitle}}</text></view>
+    <view class="finding {{item.level}}" wx:for="{{findings}}" wx:key="title">
+      <text class="tag">{{item.tag}}</text>
+      <view class="t">{{item.title}}</view>
+      <view class="d">{{item.detail}}</view>
+    </view>
+  </view>
+
+  <!-- 明细 -->
+  <view class="block">
+    <view class="block-h"><text>{{T.tableTitle}}</text></view>
+    <view class="tbl">
+      <view class="tr th">
+        <text class="td0">{{T.colAsset}}</text>
+        <text>{{T.colAmt}}</text>
+        <text>{{T.colW}}</text>
+        <text>{{T.colRc}}</text>
+      </view>
+      <view class="tr" wx:for="{{table}}" wx:key="name">
+        <text class="td0">{{item.name}}</text>
+        <text>{{item.amt}}</text>
+        <text>{{item.w}}</text>
+        <text class="{{item.neg ? 'c-cyan' : ''}}">{{item.rc}}</text>
+      </view>
+      <view class="tr tf">
+        <text class="td0">{{T.total}}</text>
+        <text>{{tableTotal.amt}}</text>
+        <text>100.0%</text>
+        <text>100.0%</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 方法 -->
+  <view class="method">
+    <view class="mh" bindtap="toggleMethod">
+      <text>{{T.methodTitle}}</text>
+      <text class="arrow">{{methodOpen ? '−' : '+'}}</text>
+    </view>
+    <view class="mb" wx:if="{{methodOpen}}">
+      <view class="mblock" wx:for="{{methodBlocks}}" wx:key="h">
+        <view class="mbt">{{item.h}}</view>
+        <view class="mbi" wx:for="{{item.items}}" wx:for-item="line" wx:key="*this">· {{line}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="disclaimer">{{T.disclaimer}}</view>
+
+  <button class="cta ghost" bindtap="openShare">{{T.share}}</button>
+
+  <view class="foot">
+    <text bindtap="goAbout">{{T.about}}</text>
+  </view>
+</view>
+
+<!-- 分享卡浮层 -->
+<view class="overlay" wx:if="{{shareOpen}}" catchtouchmove="noop">
+  <view class="panel">
+    <canvas type="2d" id="shareCanvas" class="share-canvas"></canvas>
+    <view class="acts">
+      <button class="cta ghost half" bindtap="closeShare">{{T.close}}</button>
+      <button class="cta half" bindtap="saveCard">{{T.save}}</button>
+    </view>
+  </view>
+</view>

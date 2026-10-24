@@ -1,0 +1,53 @@
+/* index 页样式继承 app.wxss，此处仅放页面级微调 */
+.hero .h1 {
+  margin-bottom: 24rpx;
+}
+
+/* ---------- 按代码 / 名称新增 ---------- */
+.code-row {
+  display: flex;
+  align-items: stretch;
+}
+.code-input {
+  flex: 1;
+  min-width: 0;
+  background: rgba(17, 39, 66, 0.55);
+  border: 1rpx solid rgba(122, 168, 222, 0.15);
+  border-radius: 12rpx;
+  padding: 18rpx 22rpx;
+  color: #E7F0FB;
+  font-size: 26rpx;
+  letter-spacing: 1rpx;
+}
+.code-input:focus {
+  border-color: #0099FF;
+}
+.ph {
+  color: #5A6E8A;
+}
+.code-btn {
+  margin-left: 16rpx;
+  background: #0099FF;
+  border-radius: 12rpx;
+  padding: 0 32rpx;
+  display: flex;
+  align-items: center;
+  color: #FFFFFF;
+  font-size: 26rpx;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.code-btn:active {
+  filter: brightness(1.12);
+}
+.code-msg {
+  margin-top: 14rpx;
+  font-size: 22rpx;
+  line-height: 1.5;
+}
+.code-msg.ok {
+  color: #00E2C6;
+}
+.code-msg.bad {
+  color: #FF6B81;
+}

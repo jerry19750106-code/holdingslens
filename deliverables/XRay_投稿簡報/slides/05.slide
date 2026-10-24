@@ -1,0 +1,85 @@
+<Slide style={{ width: '1280px', height: '720px', background: '#0A1628', padding: '20px 64px', position: 'relative', display: 'flex', flexDirection: 'column' }}>
+  <Box style={{ height: 76, justifyContent: 'center' }}>
+    <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#E6F0FA' }}>四個實用功能</Text>
+  </Box>
+  <Box style={{ flexDirection: 'row', gap: 20, height: 394, alignItems: 'stretch' }}>
+    <Box style={{ flex: 1, background: 'rgba(0,153,255,0.08)', border: '1px solid rgba(0,226,198,0.25)', borderRadius: 14, padding: 22, flexDirection: 'column' }}>
+      <Box style={{ width: 50, height: 50, borderRadius: 25, background: 'linear-gradient(135deg,#0099FF,#00E2C6)', alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ fontSize: 23, fontWeight: 'bold', color: '#0A1628' }}>1</Text>
+      </Box>
+      <Text style={{ fontSize: 23, fontWeight: 'bold', color: '#E6F0FA', marginTop: 12 }}>雙語切換</Text>
+      <Text style={{ fontSize: 17, color: '#E6F0FA', opacity: 0.85, marginTop: 10, lineHeight: 1.6 }}>簡體 / 繁體一鍵切換，報告用語符合本地習慣，不是機器翻譯。</Text>
+      <Box style={{ background: 'rgba(10,22,40,0.4)', borderRadius: 10, paddingTop: 10, paddingBottom: 10, paddingLeft: 12, paddingRight: 12, marginTop: 10, flex: 1, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 12, color: '#00E2C6', opacity: 0.8 }}>輸出預覽</Text>
+        <Text style={{ fontSize: 15, color: '#E6F0FA', marginTop: 6, lineHeight: 1.5 }}>组合波动率 σp = 17.2%<br />↕ 組合波動率 σp = 17.2%</Text>
+      </Box>
+      <Box style={{ background: 'rgba(0,226,198,0.1)', border: '1px solid rgba(0,226,198,0.35)', borderRadius: 999, paddingTop: 6, paddingBottom: 6, alignItems: 'center', marginTop: 10 }}>
+        <Text style={{ fontSize: 14, color: '#6FE3D2' }}>適合兩岸與海外用戶</Text>
+      </Box>
+    </Box>
+    <Box style={{ flex: 1, background: 'rgba(0,153,255,0.08)', border: '1px solid rgba(0,226,198,0.25)', borderRadius: 14, padding: 22, flexDirection: 'column' }}>
+      <Box style={{ width: 50, height: 50, borderRadius: 25, background: 'linear-gradient(135deg,#0099FF,#00E2C6)', alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ fontSize: 23, fontWeight: 'bold', color: '#0A1628' }}>2</Text>
+      </Box>
+      <Text style={{ fontSize: 23, fontWeight: 'bold', color: '#E6F0FA', marginTop: 12 }}>危機壓力測試</Text>
+      <Text style={{ fontSize: 17, color: '#E6F0FA', opacity: 0.85, marginTop: 10, lineHeight: 1.6 }}>把相關性抬到極端值，預演股債齊跌時組合波動會飆多少。</Text>
+      <Box style={{ background: 'rgba(10,22,40,0.4)', borderRadius: 10, paddingTop: 10, paddingBottom: 10, paddingLeft: 12, paddingRight: 12, marginTop: 10, flex: 1, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 12, color: '#00E2C6', opacity: 0.8 }}>輸出預覽</Text>
+        <Text style={{ fontSize: 15, color: '#E6F0FA', marginTop: 6, lineHeight: 1.5 }}>波動 17.2% → 19.5%<br />分散力衰退 41.5%</Text>
+      </Box>
+      <Box style={{ background: 'rgba(0,226,198,0.1)', border: '1px solid rgba(0,226,198,0.35)', borderRadius: 999, paddingTop: 6, paddingBottom: 6, alignItems: 'center', marginTop: 10 }}>
+        <Text style={{ fontSize: 14, color: '#6FE3D2' }}>看穿「假分散」</Text>
+      </Box>
+    </Box>
+    <Box style={{ flex: 1, background: 'rgba(0,153,255,0.08)', border: '1px solid rgba(0,226,198,0.25)', borderRadius: 14, padding: 22, flexDirection: 'column' }}>
+      <Box style={{ width: 50, height: 50, borderRadius: 25, background: 'linear-gradient(135deg,#0099FF,#00E2C6)', alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ fontSize: 23, fontWeight: 'bold', color: '#0A1628' }}>3</Text>
+      </Box>
+      <Text style={{ fontSize: 23, fontWeight: 'bold', color: '#E6F0FA', marginTop: 12 }}>優化模擬</Text>
+      <Text style={{ fontSize: 17, color: '#E6F0FA', opacity: 0.85, marginTop: 10, lineHeight: 1.6 }}>指出哪筆倉位過度集中，模擬調倉後的風險結構變化。</Text>
+      <Box style={{ background: 'rgba(10,22,40,0.4)', borderRadius: 10, paddingTop: 10, paddingBottom: 10, paddingLeft: 12, paddingRight: 12, marginTop: 10, flex: 1, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 12, color: '#00E2C6', opacity: 0.8 }}>輸出預覽</Text>
+        <Text style={{ fontSize: 15, color: '#E6F0FA', marginTop: 6, lineHeight: 1.5 }}>資金 41.9% → 風險 60.2%<br />超配 18.3 個百分點</Text>
+      </Box>
+      <Box style={{ background: 'rgba(0,226,198,0.1)', border: '1px solid rgba(0,226,198,0.35)', borderRadius: 999, paddingTop: 6, paddingBottom: 6, alignItems: 'center', marginTop: 10 }}>
+        <Text style={{ fontSize: 14, color: '#6FE3D2' }}>給出可執行建議</Text>
+      </Box>
+    </Box>
+    <Box style={{ flex: 1, background: 'rgba(0,153,255,0.08)', border: '1px solid rgba(0,226,198,0.25)', borderRadius: 14, padding: 22, flexDirection: 'column' }}>
+      <Box style={{ width: 50, height: 50, borderRadius: 25, background: 'linear-gradient(135deg,#0099FF,#00E2C6)', alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ fontSize: 23, fontWeight: 'bold', color: '#0A1628' }}>4</Text>
+      </Box>
+      <Text style={{ fontSize: 23, fontWeight: 'bold', color: '#E6F0FA', marginTop: 12 }}>分享卡片</Text>
+      <Text style={{ fontSize: 17, color: '#E6F0FA', opacity: 0.85, marginTop: 10, lineHeight: 1.6 }}>一鍵生成風險體檢卡長圖，存圖分享給自己或朋友。</Text>
+      <Box style={{ background: 'rgba(10,22,40,0.4)', borderRadius: 10, paddingTop: 10, paddingBottom: 10, paddingLeft: 12, paddingRight: 12, marginTop: 10, flex: 1, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 12, color: '#00E2C6', opacity: 0.8 }}>輸出預覽</Text>
+        <Text style={{ fontSize: 15, color: '#E6F0FA', marginTop: 6, lineHeight: 1.5 }}>1080 × 1440 長圖<br />健康評分 62 / 100</Text>
+      </Box>
+      <Box style={{ background: 'rgba(0,226,198,0.1)', border: '1px solid rgba(0,226,198,0.35)', borderRadius: 999, paddingTop: 6, paddingBottom: 6, alignItems: 'center', marginTop: 10 }}>
+        <Text style={{ fontSize: 14, color: '#6FE3D2' }}>體檢結果可視化</Text>
+      </Box>
+    </Box>
+  </Box>
+  <Box style={{ flex: 1, background: 'rgba(0,153,255,0.06)', border: '1px solid rgba(0,153,255,0.22)', borderRadius: 14, marginTop: 20, flexDirection: 'row', alignItems: 'center', paddingLeft: 28, paddingRight: 28, gap: 28 }}>
+    <Box>
+      <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#E6F0FA' }}>四功能共用同一份引擎與資產庫</Text>
+      <Text style={{ fontSize: 15, color: '#E6F0FA', opacity: 0.65, marginTop: 6 }}>輸入一次持倉，歸因、壓力測試、優化、卡片全部基於同一組數字，不會互相矛盾。</Text>
+    </Box>
+    <Box style={{ flex: 1 }} />
+    <Box style={{ flexDirection: 'row', gap: 12 }}>
+      <Box style={{ background: 'rgba(0,153,255,0.16)', borderRadius: 999, paddingTop: 8, paddingBottom: 8, paddingLeft: 16, paddingRight: 16 }}>
+        <Text style={{ fontSize: 14, color: '#7FC4FF' }}>協方差矩陣</Text>
+      </Box>
+      <Box style={{ background: 'rgba(0,226,198,0.14)', borderRadius: 999, paddingTop: 8, paddingBottom: 8, paddingLeft: 16, paddingRight: 16 }}>
+        <Text style={{ fontSize: 14, color: '#6FE3D2' }}>風險貢獻分解</Text>
+      </Box>
+      <Box style={{ background: 'rgba(255,214,102,0.12)', borderRadius: 999, paddingTop: 8, paddingBottom: 8, paddingLeft: 16, paddingRight: 16 }}>
+        <Text style={{ fontSize: 14, color: '#FFD666' }}>126 項測試把關</Text>
+      </Box>
+    </Box>
+  </Box>
+  <Box style={{ position: 'absolute', bottom: 18, left: 64, right: 64, flexDirection: 'row', justifyContent: 'space-between' }}>
+    <Text style={{ fontSize: 14, color: '#E6F0FA', opacity: 0.45 }}>持倉透鏡 HoldingsLens · 1024 投稿</Text>
+    <Text style={{ fontSize: 14, color: '#E6F0FA', opacity: 0.45 }}>05 / 09</Text>
+  </Box>
+</Slide>

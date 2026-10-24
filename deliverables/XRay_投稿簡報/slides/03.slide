@@ -1,0 +1,22 @@
+<Slide style={{ width: '1280px', height: '720px', background: '#0A1628', padding: '20px 64px', position: 'relative', display: 'flex', flexDirection: 'column' }}>
+  <Box style={{ flexDirection: 'row', gap: 36, flex: 1, alignItems: 'stretch' }}>
+    <Box style={{ flex: 35, background: 'linear-gradient(135deg,#0099FF 0%,#00E2C6 100%)', borderRadius: 16, padding: 40, justifyContent: 'space-between' }}>
+      <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#0A1628', lineHeight: 1.25 }}>不是預測工具<br />是風險解剖刀</Text>
+      <Text style={{ fontSize: 19, color: '#0A1628', opacity: 0.82, lineHeight: 1.6 }}>不猜明天的漲跌，<br />只把今天的風險結構攤開。</Text>
+    </Box>
+    <Box style={{ flex: 65, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+      <Box style={{ background: 'rgba(230,240,250,0.06)', borderLeft: '4px solid rgba(230,240,250,0.25)', borderRadius: 10, padding: 22 }}>
+        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#E6F0FA', opacity: 0.7 }}>預測型（市面多數）</Text>
+        <Text style={{ fontSize: 19, color: '#E6F0FA', opacity: 0.85, marginTop: 10, lineHeight: 1.6 }}>猜明天漲跌 · 給買賣點 · 回答「該不該買」。</Text>
+      </Box>
+      <Box style={{ background: 'rgba(0,153,255,0.12)', borderLeft: '4px solid #0099FF', borderRadius: 10, padding: 22 }}>
+        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#0099FF' }}>歸因型（持倉透鏡）</Text>
+        <Text style={{ fontSize: 19, color: '#E6F0FA', marginTop: 10, lineHeight: 1.6 }}>拆今天結構 · 量化每類資產的風險貢獻 · 回答「我的風險押在哪」。</Text>
+      </Box>
+    </Box>
+  </Box>
+  <Box style={{ position: 'absolute', bottom: 18, left: 64, right: 64, flexDirection: 'row', justifyContent: 'space-between' }}>
+    <Text style={{ fontSize: 14, color: '#E6F0FA', opacity: 0.45 }}>持倉透鏡 HoldingsLens · 1024 投稿</Text>
+    <Text style={{ fontSize: 14, color: '#E6F0FA', opacity: 0.45 }}>03 / 09</Text>
+  </Box>
+</Slide>

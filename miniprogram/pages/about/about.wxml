@@ -1,0 +1,48 @@
+<view class="page about">
+
+  <view class="brand-row">
+    <view class="dot"></view>
+    <text class="brand">{{T.brand}}</text>
+  </view>
+
+  <view class="title">{{T.aboutTitle}}</view>
+
+  <view class="body">
+    <text>{{T.aboutBody}}</text>
+  </view>
+
+  <view class="section">
+    <view class="sh">三个只有它能回答的问题</view>
+    <view class="item">· 我名义上买了 6 个品种，实际押了几注？</view>
+    <view class="item">· 哪个仓位吃掉了我最多的风险？</view>
+    <view class="item">· 如果明天所有相关性都变成 1，我的组合会怎样？</view>
+  </view>
+
+  <view class="section">
+    <view class="sh">{{T.methodTitle}}</view>
+    <view class="mblock" wx:for="{{methodBlocks}}" wx:key="h">
+      <view class="mbt">{{item.h}}</view>
+      <view class="mbi" wx:for="{{item.items}}" wx:for-item="line" wx:key="*this">· {{line}}</view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="sh">资产类别参数</view>
+    <view class="lib-row lib-head">
+      <text class="ln">类别</text>
+      <text class="lv">波动率</text>
+      <text class="lm">最深回撤</text>
+    </view>
+    <view class="lib-row" wx:for="{{lib}}" wx:key="id">
+      <text class="ln">{{item.name}}</text>
+      <text class="lv">{{item.vol}}%</text>
+      <text class="lm">{{item.mdd}}%</text>
+    </view>
+  </view>
+
+  <view class="disclaimer">{{T.disclaimer}}</view>
+
+  <view class="foot">
+    <text>1024 造物挑战 · 投稿作品</text>
+  </view>
+</view>

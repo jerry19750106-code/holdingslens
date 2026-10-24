@@ -1,0 +1,68 @@
+<Slide style={{ width: '1280px', height: '720px', background: '#0A1628', position: 'relative', overflow: 'hidden' }}>
+  <Box style={{ position: 'absolute', top: -140, right: -100, width: 560, height: 560, background: 'radial-gradient(circle, rgba(0,153,255,0.20) 0%, transparent 70%)' }} />
+  <Box style={{ position: 'absolute', right: 120, top: 90, width: 340, height: 340 }}>
+    <svg width={340} height={340} viewBox='0 0 370 370'>
+      <circle cx='185' cy='185' r='175' fill='rgba(0,153,255,0.05)' />
+      <circle cx='185' cy='185' r='175' fill='none' stroke='#0099FF' strokeWidth='1' opacity='0.22' />
+      <circle cx='185' cy='185' r='135' fill='none' stroke='#00E2C6' strokeWidth='1' opacity='0.28' />
+      <circle cx='185' cy='185' r='95' fill='none' stroke='#0099FF' strokeWidth='2' opacity='0.5' />
+      <circle cx='185' cy='185' r='54' fill='rgba(0,153,255,0.14)' />
+      <circle cx='185' cy='185' r='7' fill='#00E2C6' />
+      <line x1='185' y1='10' x2='185' y2='360' stroke='#0099FF' strokeWidth='1' opacity='0.12' />
+      <line x1='10' y1='185' x2='360' y2='185' stroke='#0099FF' strokeWidth='1' opacity='0.12' />
+    </svg>
+  </Box>
+  <Box style={{ position: 'absolute', right: 64, bottom: 96, width: 236, background: 'rgba(10,22,40,0.72)', border: '1px solid rgba(0,153,255,0.35)', borderRadius: 16, paddingTop: 18, paddingBottom: 18, paddingLeft: 18, paddingRight: 18, flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+    <svg width={76} height={76} viewBox='0 0 76 76'>
+      <circle cx='38' cy='38' r='32' fill='none' stroke='rgba(0,153,255,0.18)' strokeWidth='7' />
+      <circle cx='38' cy='38' r='32' fill='none' stroke='#00E2C6' strokeWidth='7' strokeLinecap='round' strokeDasharray='110.6 90.5' transform='rotate(-90 38 38)' />
+      <text x='38' y='44' fill='#E6F0FA' fontSize='19' fontWeight='bold' textAnchor='middle'>62</text>
+    </svg>
+    <Box>
+      <Text style={{ fontSize: 15, color: '#E6F0FA', fontWeight: 'bold' }}>結構健康評分</Text>
+      <Text style={{ fontSize: 13, color: '#7FC4FF', marginTop: 4 }}>基本穩健·有偏科</Text>
+      <Text style={{ fontSize: 12, color: '#E6F0FA', opacity: 0.5, marginTop: 4 }}>示例：4 檔持倉實測</Text>
+    </Box>
+  </Box>
+  <Box style={{ position: 'absolute', left: 90, top: 150, width: 700 }}>
+    <Text style={{ fontSize: 18, color: '#00E2C6', letterSpacing: 3 }}>1024 造物挑戰 · 投稿作品</Text>
+    <Text style={{ fontSize: 70, fontWeight: 'bold', color: '#E6F0FA', marginTop: 16, lineHeight: 1.12 }}>持倉透鏡<br />HoldingsLens</Text>
+    <Text style={{ fontSize: 23, color: '#E6F0FA', opacity: 0.72, marginTop: 26, lineHeight: 1.6 }}>不只看賺多少，<span style={{ color: '#0099FF', fontWeight: 'bold' }}>更看風險從哪來</span>。<br />一套把組合風險來源拆開給你看的工具。</Text>
+  </Box>
+  <Box style={{ position: 'absolute', left: 90, top: 470, width: 730, flexDirection: 'row', gap: 12 }}>
+    <Box style={{ background: 'rgba(0,153,255,0.14)', border: '1px solid rgba(0,153,255,0.45)', borderRadius: 999, paddingTop: 7, paddingBottom: 7, paddingLeft: 16, paddingRight: 16 }}>
+      <Text style={{ fontSize: 15, color: '#7FC4FF' }}>風險貢獻歸因</Text>
+    </Box>
+    <Box style={{ background: 'rgba(0,226,198,0.12)', border: '1px solid rgba(0,226,198,0.45)', borderRadius: 999, paddingTop: 7, paddingBottom: 7, paddingLeft: 16, paddingRight: 16 }}>
+      <Text style={{ fontSize: 15, color: '#6FE3D2' }}>危機壓力測試</Text>
+    </Box>
+    <Box style={{ background: 'rgba(255,214,102,0.12)', border: '1px solid rgba(255,214,102,0.4)', borderRadius: 999, paddingTop: 7, paddingBottom: 7, paddingLeft: 16, paddingRight: 16 }}>
+      <Text style={{ fontSize: 15, color: '#FFD666' }}>持倉重疊偵測</Text>
+    </Box>
+    <Box style={{ background: 'rgba(0,153,255,0.14)', border: '1px solid rgba(0,153,255,0.45)', borderRadius: 999, paddingTop: 7, paddingBottom: 7, paddingLeft: 16, paddingRight: 16 }}>
+      <Text style={{ fontSize: 15, color: '#7FC4FF' }}>結構健康評分</Text>
+    </Box>
+  </Box>
+  <Box style={{ position: 'absolute', left: 90, top: 540, width: 730, flexDirection: 'row', gap: 44 }}>
+    <Box>
+      <Text style={{ fontSize: 27, fontWeight: 'bold', color: '#0099FF' }}>17 類</Text>
+      <Text style={{ fontSize: 13, color: '#E6F0FA', opacity: 0.55, marginTop: 2 }}>資產類別</Text>
+    </Box>
+    <Box>
+      <Text style={{ fontSize: 27, fontWeight: 'bold', color: '#00E2C6' }}>136 組</Text>
+      <Text style={{ fontSize: 13, color: '#E6F0FA', opacity: 0.55, marginTop: 2 }}>相關係數</Text>
+    </Box>
+    <Box>
+      <Text style={{ fontSize: 27, fontWeight: 'bold', color: '#FFD666' }}>126 項</Text>
+      <Text style={{ fontSize: 13, color: '#E6F0FA', opacity: 0.55, marginTop: 2 }}>不變量測試</Text>
+    </Box>
+    <Box>
+      <Text style={{ fontSize: 27, fontWeight: 'bold', color: '#7FC4FF' }}>3 端</Text>
+      <Text style={{ fontSize: 13, color: '#E6F0FA', opacity: 0.55, marginTop: 2 }}>網頁 / 小程序 / 腳本</Text>
+    </Box>
+  </Box>
+  <Box style={{ position: 'absolute', left: 90, bottom: 60, width: 700, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+    <Box style={{ width: 40, height: 2, background: '#0099FF' }} />
+    <Text style={{ fontSize: 17, color: '#E6F0FA', opacity: 0.6 }}>H5 網頁 · 微信小程序 · 全本地計算，不上傳你的持倉</Text>
+  </Box>
+</Slide>

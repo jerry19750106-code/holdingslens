@@ -1,0 +1,49 @@
+<Slide style={{ width: '1280px', height: '720px', background: '#0A1628', padding: '20px 64px', position: 'relative', display: 'flex', flexDirection: 'column' }}>
+  <Box style={{ height: 76, justifyContent: 'center' }}>
+    <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#E6F0FA' }}>實測：一個 4 資產組合（真實計算）</Text>
+  </Box>
+  <Box style={{ flexDirection: 'row', gap: 36, flex: 1, alignItems: 'stretch' }}>
+    <Box style={{ flex: 38, background: 'rgba(0,153,255,0.08)', border: '1px solid rgba(0,226,198,0.22)', borderRadius: 16, padding: 28, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+      <Text style={{ fontSize: 20, color: '#E6F0FA', opacity: 0.75 }}>組合健康分</Text>
+      <Text style={{ fontSize: 110, fontWeight: 'bold', color: '#0099FF', lineHeight: 1 }}>62</Text>
+      <Text style={{ fontSize: 20, color: '#00E2C6', fontWeight: 'bold', marginTop: 6 }}>基本穩健·有偏科</Text>
+      <Text style={{ fontSize: 16, color: '#E6F0FA', opacity: 0.7, marginTop: 14, textAlign: 'center', lineHeight: 1.5 }}>波動率 17.2% → 危機情境 19.5%<br />名目持倉 4 筆 · 風險有效押注 2.3<br />危機下分散效果衰退 41.5%</Text>
+    </Box>
+    <Box style={{ flex: 62, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+      <Text style={{ fontSize: 18, color: '#E6F0FA', opacity: 0.8, marginBottom: 2 }}>每類資產的風險貢獻（% of 波動）</Text>
+      <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+        <Text style={{ fontSize: 17, color: '#E6F0FA', width: 120 }}>成長股</Text>
+        <Box style={{ flex: 1, height: 26, background: 'rgba(230,240,250,0.08)', borderRadius: 6 }}>
+          <Box style={{ width: '100%', height: 26, background: 'linear-gradient(90deg,#0099FF,#00E2C6)', borderRadius: 6 }} />
+        </Box>
+        <Text style={{ fontSize: 17, color: '#0099FF', fontWeight: 'bold', width: 70, textAlign: 'right' }}>60.2%</Text>
+      </Box>
+      <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+        <Text style={{ fontSize: 17, color: '#E6F0FA', width: 120 }}>美股科技</Text>
+        <Box style={{ flex: 1, height: 26, background: 'rgba(230,240,250,0.08)', borderRadius: 6 }}>
+          <Box style={{ width: '62%', height: 26, background: 'linear-gradient(90deg,#0099FF,#00E2C6)', borderRadius: 6 }} />
+        </Box>
+        <Text style={{ fontSize: 17, color: '#0099FF', fontWeight: 'bold', width: 70, textAlign: 'right' }}>37.4%</Text>
+      </Box>
+      <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+        <Text style={{ fontSize: 17, color: '#E6F0FA', width: 120 }}>黃金</Text>
+        <Box style={{ flex: 1, height: 26, background: 'rgba(230,240,250,0.08)', borderRadius: 6 }}>
+          <Box style={{ width: '6%', height: 26, background: 'linear-gradient(90deg,#0099FF,#00E2C6)', borderRadius: 6 }} />
+        </Box>
+        <Text style={{ fontSize: 17, color: '#00E2C6', fontWeight: 'bold', width: 70, textAlign: 'right' }}>2.5%</Text>
+      </Box>
+      <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+        <Text style={{ fontSize: 17, color: '#E6F0FA', width: 120 }}>債券</Text>
+        <Box style={{ flex: 1, height: 26, background: 'rgba(230,240,250,0.08)', borderRadius: 6, flexDirection: 'row', justifyContent: 'flex-end' }}>
+          <Box style={{ width: '4%', height: 26, background: '#E6F0FA', opacity: 0.5, borderRadius: 6 }} />
+        </Box>
+        <Text style={{ fontSize: 17, color: '#E6F0FA', opacity: 0.7, fontWeight: 'bold', width: 70, textAlign: 'right' }}>-0.2%</Text>
+      </Box>
+      <Text style={{ fontSize: 17, color: '#E6F0FA', opacity: 0.85, marginTop: 4, lineHeight: 1.5 }}>成長股佔 41.9% 資金卻吃掉 <span style={{ color: '#0099FF', fontWeight: 'bold' }}>60.2%</span> 波動；債券 -0.2% 表示它在<span style={{ color: '#00E2C6' }}>吸收波動</span>（對沖）。</Text>
+    </Box>
+  </Box>
+  <Box style={{ position: 'absolute', bottom: 18, left: 64, right: 64, flexDirection: 'row', justifyContent: 'space-between' }}>
+    <Text style={{ fontSize: 14, color: '#E6F0FA', opacity: 0.45 }}>持倉透鏡 HoldingsLens · 1024 投稿</Text>
+    <Text style={{ fontSize: 14, color: '#E6F0FA', opacity: 0.45 }}>07 / 09</Text>
+  </Box>
+</Slide>

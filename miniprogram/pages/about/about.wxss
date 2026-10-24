@@ -1,0 +1,109 @@
+.about {
+  padding-bottom: 80rpx;
+}
+.brand-row {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0 30rpx;
+}
+.brand-row .dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: #0099FF;
+  margin-right: 16rpx;
+  box-shadow: 0 0 18rpx rgba(0, 153, 255, 0.9);
+}
+.brand-row .brand {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+.title {
+  font-size: 40rpx;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 26rpx;
+}
+.body {
+  font-size: 26rpx;
+  color: #A8BDD4;
+  line-height: 1.85;
+  margin-bottom: 44rpx;
+}
+.body text {
+  white-space: pre-line;
+}
+.section {
+  margin-bottom: 44rpx;
+}
+.sh {
+  font-size: 23rpx;
+  font-weight: 600;
+  color: #7C93B2;
+  letter-spacing: 1rpx;
+  margin-bottom: 18rpx;
+}
+.item {
+  font-size: 25rpx;
+  color: #A8BDD4;
+  line-height: 1.8;
+  margin-bottom: 6rpx;
+}
+.mblock {
+  margin-bottom: 24rpx;
+}
+.mbt {
+  font-size: 25rpx;
+  color: #E7F0FB;
+  font-weight: 600;
+  margin-bottom: 8rpx;
+}
+.mbi {
+  font-size: 22rpx;
+  color: #7C93B2;
+  line-height: 1.75;
+  margin-bottom: 4rpx;
+}
+.lib-row {
+  display: flex;
+  padding: 14rpx 18rpx;
+  border-bottom: 1rpx solid rgba(122, 168, 222, 0.07);
+  font-size: 23rpx;
+}
+.lib-row .ln {
+  flex: 1.6;
+  color: #C9DCF0;
+}
+.lib-row .lv {
+  flex: 1;
+  text-align: right;
+  color: #7C93B2;
+}
+.lib-row .lm {
+  flex: 1;
+  text-align: right;
+  color: #7C93B2;
+}
+.lib-head {
+  background: rgba(17, 39, 66, 0.5);
+  border-radius: 12rpx 12rpx 0 0;
+  font-size: 19rpx;
+}
+.lib-head text {
+  color: #5A6E8A;
+}
+.disclaimer {
+  font-size: 19rpx;
+  color: #5A6E8A;
+  line-height: 1.7;
+  padding: 24rpx 26rpx;
+  border: 1rpx solid rgba(122, 168, 222, 0.15);
+  border-radius: 20rpx;
+  background: rgba(255, 165, 61, 0.03);
+}
+.foot {
+  text-align: center;
+  padding: 40rpx 0 10rpx;
+  font-size: 20rpx;
+  color: #5A6E8A;
+}
